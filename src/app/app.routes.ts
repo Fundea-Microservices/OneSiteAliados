@@ -36,7 +36,7 @@ export const routes: Routes = [
             },
             {
                 path: 'config',
-                canActivate: [AccessGuard],
+                // canActivate: [AccessGuard],
                 children: [
                     {
                         path: 'menus',

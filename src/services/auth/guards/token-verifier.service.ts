@@ -38,19 +38,21 @@ export class TokenVerifierService {
     if (!token) {
       return; // No hay token, no hacemos nada; el guard se encargará del flujo de no autenticado
     }
+    return;
 
-    try {
-      const isValid = await this.authService.verifyToken(token);
-      if (!isValid) {
-        this.authService.logout('Tu sesión ha expirado. Inicia sesión nuevamente.');
-        this.stop();
-        this.router.navigate(['/login']);
-      }
-    } catch (_) {
-      // En caso de error de red/servidor, tratamos como inválido por seguridad
-      this.authService.logout('Tu sesión ha expirado. Inicia sesión nuevamente.');
-      this.stop();
-      this.router.navigate(['/login']);
-    }
+    // TO DO: Habilitar verificación de token en el backend
+    // try {
+    //   const isValid = await this.authService.verifyToken(token);
+    //   if (!isValid) {
+    //     this.authService.logout('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    //     this.stop();
+    //     this.router.navigate(['/login']);
+    //   }
+    // } catch (_) {
+    //   // En caso de error de red/servidor, tratamos como inválido por seguridad
+    //   this.authService.logout('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    //   this.stop();
+    //   this.router.navigate(['/login']);
+    // }
   }
 }
