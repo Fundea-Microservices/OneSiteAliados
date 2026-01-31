@@ -12,9 +12,9 @@ type LoginResponse = ApiResponse<ILogin>;
 @Injectable({ providedIn: 'root' })
 export class AuthService extends HttpService {
   private readonly endpoints = {
-    login: '/auth/login',
-    verifyToken: '/auth/verify-token',
-    usuarios: '/auth/usuarios',
+    login: '/aliado/login',
+    verifyToken: '/aliado/verify-token',
+    usuarios: '/aliado/usuarios',
   };
 
   // Signal para el estado del usuario
