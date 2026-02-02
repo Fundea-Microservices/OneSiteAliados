@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { UpsertUsuarioComponent } from '../../components/upsert-usuario/upsert-usuario';
 import { UsuariosService } from '../../../../services/auth/usuarios.service';
@@ -20,6 +20,8 @@ export default class MiPerfilPageComponent {
   private usuariosService = inject(UsuariosService);
   private rolService = inject(RolService);
   private puestoService = inject(PuestoService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   user = this.auth.user; // signal readonly
   isEditing = signal(false);
@@ -33,6 +35,7 @@ export default class MiPerfilPageComponent {
   pwdNew = signal('');
   pwdConfirm = signal('');
   pwdLoading = signal(false);
+  isForcePasswordChange = signal(false);
 
   @ViewChild('upsertModal', { static: true }) upsertModal!: ElementRef<HTMLDivElement>;
   @ViewChild('passwordModal', { static: true }) passwordModal!: ElementRef<HTMLDivElement>;
@@ -46,6 +49,15 @@ export default class MiPerfilPageComponent {
     ]);
     if (r?.success) this.roles.set(r.data || []);
     if (p?.success) this.puestos.set(p.data || []);
+
+    // Verificar si se debe forzar el cambio de contraseña
+    this.route.queryParams.subscribe(params => {
+      if (params['forcePasswordChange'] === 'true') {
+        this.isForcePasswordChange.set(true);
+        // Abrir el modal de cambio de contraseña automáticamente
+        setTimeout(() => this.openPasswordModal(), 300);
+      }
+    });
   }
 
   onChangePhotoClick() {
@@ -96,6 +108,13 @@ export default class MiPerfilPageComponent {
   }
 
   closeModals() {
+    // Si es un cambio de contraseña forzado, cerrar sesión al intentar cerrar el modal
+    if (this.isForcePasswordChange() && this.showPwdModal()) {
+      this.auth.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
+
     const el1 = this.upsertModal?.nativeElement;
     const el2 = this.passwordModal?.nativeElement;
     if ((window as any).HSOverlay) {
@@ -154,13 +173,23 @@ export default class MiPerfilPageComponent {
 
     this.pwdLoading.set(true);
     try {
-      const userId = this.user()?.usuarioId || '';
-  const resp = await this.usuariosService.cambiarClave(userId, current, next);
+      const userId = this.user()?.userId || '';
+      const resp = await this.usuariosService.cambiarClave(userId, current, next);
       if (resp?.success) {
-        // Actualizar marca de tiempo local del último cambio
-        const updated = { ...this.user(), lastPasswordUpdate: new Date() } as any;
+        // Actualizar marca de tiempo local del último cambio y marcar como no nuevo
+        const updated = { ...this.user(), lastPasswordUpdate: new Date(), new: false } as any;
         this.auth.updateUser(updated);
-        this.closeModals();
+        // Actualizar también en localStorage
+        localStorage.setItem('usuario', JSON.stringify(updated));
+        
+        // Si era cambio forzado, redirigir al dashboard
+        if (this.isForcePasswordChange()) {
+          this.isForcePasswordChange.set(false);
+          this.closeModals();
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.closeModals();
+        }
       }
     } finally {
       this.pwdLoading.set(false);

@@ -17,7 +17,46 @@
         Cargando menú...
     </div>
 } @else if (accesos().length === 0) {
-    <div class="p-3 text-sm text-slate-400">Sin accesos asignados</div>
+
+    <!-- <div class="p-3 text-sm text-slate-400">Sin accesos asignados</div> -->
+      <div class="hs-accordion" [id]="'config'">
+            <button type="button"
+                class="hs-accordion-toggle w-full flex items-center gap-x-3 py-2.5 px-3 text-sm font-semibold text-[#1e2328] hover:bg-[#eef0f2] hover:text-[#1e2328] rounded-lg  focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200"
+                [id]="'config' + '-btn'"
+                aria-expanded="false"
+                [attr.aria-controls]="'config' + '-content'"
+                [attr.data-hs-accordion]="'#' + ('config' + '-content')">
+                <app-custom-icon [name]="'cog'" [color]="'#1e2328'"></app-custom-icon>
+                {{'Configuración'}}
+                <svg class="hs-accordion-active:rotate-180 shrink-0 size-4 ml-auto transition-transform duration-200"
+                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                </svg>
+            </button>
+
+            <div
+                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+                role="region"
+                [id]="'config' + '-content'"
+                [attr.aria-labelledby]="'config' + '-btn'">
+                <div class="pl-6 space-y-1 mt-1">
+                        <a [routerLink]="'config/usuarios'"
+                            routerLinkActive="bg-[#eef0f2] text-[#1e2328] border-l-4 border-blue-400"
+                            class="flex items-center gap-x-3 py-2 px-3 text-sm  font-medium hover:bg-[#eef0f2] hover:text-[#1e2328] focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200">
+                            <app-custom-icon [name]="'users'" [size]="15" [color]="'#1e2328'"></app-custom-icon>
+                            {{'Usuarios'}}
+                        </a>
+                        <a [routerLink]="'config/roles'"
+                            routerLinkActive="bg-[#eef0f2] text-[#1e2328] border-l-4 border-blue-400"
+                            class="flex items-center gap-x-3 py-2 px-3 text-sm  font-medium hover:bg-[#eef0f2] hover:text-[#1e2328] focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200">
+                            <app-custom-icon [name]="'user-check'" [size]="15" [color]="'#1e2328'"></app-custom-icon>
+                            {{'Roles'}}
+                        </a>
+                </div>
+            </div>
+        </div>
+
 } @else {
 <div class="hs-accordion-group" id="side-menu-accordion-group">
     @for(acceso of accesos(); track acceso.accesoId){

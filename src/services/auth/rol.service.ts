@@ -16,7 +16,7 @@ type RolListResponse = ApiResponse<IRol[]>;
 export class RolService extends HttpService {
 
   private readonly endpoints = {
-    empresa: '/auth/roles',
+    empresa: '/config/rol',
   };
 
   constructor(http: HttpClient, private toastr: ToastrService) {

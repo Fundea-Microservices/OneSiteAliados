@@ -14,8 +14,8 @@ type UsuarioListResponse = ApiResponse<IUsuario[]>;
 @Injectable({ providedIn: 'root' })
 export class UsuariosService extends HttpService {
   private readonly endpoints = {
-    usuarios: '/auth/usuarios',
-    cambiarClave: '/auth/usuarios/cambiar-clave',
+    usuarios: '/config/usuarios',
+    cambiarClave: '/config/usuarios/cambiar-clave',
     files: '/files'
   };
 
@@ -72,8 +72,8 @@ export class UsuariosService extends HttpService {
 
   async updateUsuario(usuario: IUsuario): Promise<UsuarioResponse | null> {
     try {
-      const { usuarioId, nombre1, nombre2, nombre3, apellido1, apellido2, apellido3, userName, correo, rolId, puestoId, activo } = usuario;
-      const resp = await firstValueFrom(this.put<UsuarioResponse>(`${this.endpoints.usuarios}/${usuarioId}`, {
+      const { userId, nombre1, nombre2, nombre3, apellido1, apellido2, apellido3, userName, correo, rolId, puestoId, activo } = usuario;
+      const resp = await firstValueFrom(this.put<UsuarioResponse>(`${this.endpoints.usuarios}/${userId}`, {
         nombre1, nombre2, nombre3, apellido1, apellido2, apellido3, userName, correo, rolId, puestoId, activo
       }));
       if (resp.body?.success) {

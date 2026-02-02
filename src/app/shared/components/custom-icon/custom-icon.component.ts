@@ -10,7 +10,7 @@ import { LucideAngularModule } from 'lucide-angular';
     @if (iconExists()) {
       <lucide-icon [name]="normalizedName()" [color]="effectiveColor()" [size]="size()" [strokeWidth]="strokeWidth()" [attr.class]="class()"></lucide-icon>
     } @else {
-      <lucide-icon name="help-circle" class="text-red-500"></lucide-icon>
+      <lucide-icon name="info" class="text-red-500"></lucide-icon>
     }
   `,
 })

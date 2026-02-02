@@ -11,7 +11,7 @@ export type AccesoListResponse = ApiResponse<IAcceso[]>;
 
 @Injectable({ providedIn: 'root' })
 export class AccesoService extends HttpService {
-  private readonly endpoints = { base: '/auth/accesos' };
+  private readonly endpoints = { base: '/aliado/accesos' };
 
   constructor(http: HttpClient, private toastr: ToastrService) {
     super(http);

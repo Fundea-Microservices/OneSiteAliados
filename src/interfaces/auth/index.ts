@@ -1,3 +1,5 @@
+
+
 export interface IPuesto {
     puestoId?: string;  // UUID del puesto
     nombre: string;    // Nombre del puesto
@@ -6,7 +8,7 @@ export interface IPuesto {
 }
 
 export interface IUsuario {
-  usuarioId?: string;             // UUID del usuario
+  userId?: string;             // UUID del usuario
   nombreCompleto: string;        // Nombre completo concatenado
   nombre1: string;               // Primer nombre
   nombre2?: string | null;       // Segundo nombre
@@ -23,7 +25,7 @@ export interface IUsuario {
   activo: boolean;               // Estado del usuario (activo/inactivo)
   rolId: string;                 // ID del rol asignado
   puestoId?: string | null;      // ID del puesto (si aplica)
-
+  new?: boolean;                  // Indica si es un usuario nuevo
   // Relaciones
   rol?: IRol;                    // Objeto del rol relacionado
   puesto?: IPuesto;              // Objeto del puesto relacionado
@@ -97,6 +99,8 @@ export interface IRol {
 export interface ILogin {
   user: IUsuario,
   token: string
+  rol?: IRol,
+  empresas?: IEmpresa[]
 }
 
 
@@ -142,4 +146,14 @@ export interface IConfig {
   created_at: Date;             // Fecha de creación
   updated_at?: Date | null;     // Fecha de última actualización
   deleted_at?: Date | null;     // Fecha de eliminación lógica
+}
+
+
+export interface IEmpresa {
+  empresaId: string;
+  nombreEmpresa: string;
+  nit: string;
+  telefono: string;
+  direccion: string;
+  activo: boolean;
 }

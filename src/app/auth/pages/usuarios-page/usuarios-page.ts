@@ -9,7 +9,7 @@ import { PuestoService } from '../../../../services/auth/puesto.service';
 import { CustomIconComponent } from '../../../shared/components/custom-icon/custom-icon.component';
 
 const emptyUsuario: IUsuario = {
-  usuarioId: '',
+  userId: '',
   nombreCompleto: '',
   nombre1: '',
   apellido1: '',
@@ -144,12 +144,12 @@ export default class UsuariosPageComponent {
   }
 
   async upsertUsuario(usuario: IUsuario) {
-    if (!usuario.usuarioId) await this.createUsuario(usuario);
+    if (!usuario.userId) await this.createUsuario(usuario);
     else await this.updateUsuario(usuario);
   }
 
   async createUsuario(usuario: IUsuario) {
-    const { usuarioId, created_at, updated_at, deleted_at, ...payload } = usuario;
+    const { userId, created_at, updated_at, deleted_at, ...payload } = usuario;
     const resp = await this.usuariosService.createUsuario(payload as any);
     if (resp?.success) {
       // Agregar el nuevo usuario a la lista local sin recargar toda la tabla
@@ -174,7 +174,7 @@ export default class UsuariosPageComponent {
       // Actualizar el usuario en la lista local sin recargar toda la tabla
       const usuarioActualizado = resp.data;
       this.usuariosList.update(usuarios => 
-        usuarios.map(u => u.usuarioId === usuarioActualizado.usuarioId ? usuarioActualizado : u)
+        usuarios.map(u => u.userId === usuarioActualizado.userId ? usuarioActualizado : u)
       );
       
       this.closeModal();
@@ -182,7 +182,7 @@ export default class UsuariosPageComponent {
   }
 
   async deleteUsuario(usuario: IUsuario) {
-    const resp = await this.usuariosService.deleteUsuario(usuario.usuarioId || '');
+    const resp = await this.usuariosService.deleteUsuario(usuario.userId || '');
     if (resp?.success) {
       this.fetchData();
       this.closeModal();

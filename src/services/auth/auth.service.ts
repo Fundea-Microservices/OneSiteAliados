@@ -48,7 +48,7 @@ export class AuthService extends HttpService {
 
     // Usuario "vacío"
     return {
-      usuarioId: '',
+      userId: '',
       nombreCompleto: 'Sin autenticar',
       userName: '',
       nombre1: '',
@@ -130,6 +130,7 @@ export class AuthService extends HttpService {
           const user = resp.body.data.user;
           await this.fetchAndApplyUserPhoto(user);
         }
+        console.log("🚀 ~ AuthService ~ login ~ resp:", resp.body)
         return resp.body;
       }
       return null;
@@ -226,6 +227,7 @@ export class AuthService extends HttpService {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('accesos');
+    localStorage.removeItem('empresa');
 
     // Resetear signal del usuario
     this._user.set(this.loadUserFromStorage());

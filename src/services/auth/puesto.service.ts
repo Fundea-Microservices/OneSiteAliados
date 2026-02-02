@@ -16,7 +16,7 @@ type PuestoListResponse = ApiResponse<IPuesto[]>;
 export class PuestoService extends HttpService {
 
   private readonly endpoints = {
-    empresa: '/auth/puestos',
+    empresa: '/config/puestos',
   };
 
   constructor(http: HttpClient, private toastr: ToastrService) {
