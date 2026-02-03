@@ -40,7 +40,7 @@ export class AuthService extends HttpService {
       if (parsed?.userName) {
         const cached = localStorage.getItem(`fotoPerfil:${parsed.userName}`);
         if (cached && cached.startsWith('data:')) {
-          parsed.fotoUrl = cached as any;
+          parsed.photoUrl = cached as any;
         }
       }
       return parsed;
@@ -49,20 +49,14 @@ export class AuthService extends HttpService {
     // Usuario "vacío"
     return {
       userId: '',
-      nombreCompleto: 'Sin autenticar',
-      userName: '',
-      nombre1: '',
-      nombre2: '',
-      nombre3: '',
-      apellido1: '',
-      apellido2: '',
-      apellido3: '',
+      fullName: 'Sin autenticar',
+      userName: '',      
       clave: '',
-      correo: '',
-      fotoUrl: '',
+      email: '',
+      photoUrl: '',
       lastPasswordUpdate: new Date(),
       huella: null,
-      activo: false,
+      active: false,
       rolId: '',
       puestoId: null,
       // metodoId: null,
@@ -148,18 +142,18 @@ export class AuthService extends HttpService {
    */
   async fetchAndApplyUserPhoto(user: IUsuario): Promise<IUsuario> {
     try {
-      if (!user?.fotoUrl) {
+      if (!user?.photoUrl) {
         this.updateUser(user);
         return user;
       }
       // Si ya es un dataURL, solo persistimos
-      if (typeof user.fotoUrl === 'string' && user.fotoUrl.startsWith('data:')) {
+      if (typeof user.photoUrl === 'string' && user.photoUrl.startsWith('data:')) {
         this.updateUser(user);
         return user;
       }
 
-      const fotoPath = String(user.fotoUrl || '').trim();
-      if (!fotoPath) {
+      const photoPath = String(user.photoUrl || '').trim();
+      if (!photoPath) {
         this.updateUser(user);
         return user;
       }
@@ -169,13 +163,13 @@ export class AuthService extends HttpService {
       // - Si NO tiene '/', asumir que es el filename y pegar a /auth/usuarios/perfil/:fileName
       // - Si tiene '/', tratarlo como ruta relativa al apiPath
       let url: string;
-      const isAbsolute = /^https?:\/\//i.test(fotoPath);
+      const isAbsolute = /^https?:\/\//i.test(photoPath);
       if (isAbsolute) {
-        url = fotoPath;
-      } else if (!fotoPath.includes('/')) {
-        url = `${environment.apiPath}/files/perfil/${encodeURIComponent(fotoPath)}`;
+        url = photoPath;
+      } else if (!photoPath.includes('/')) {
+        url = `${environment.apiPath}/files/perfil/${encodeURIComponent(photoPath)}`;
       } else {
-        const relative = fotoPath.startsWith('/') ? fotoPath : `/${fotoPath}`;
+        const relative = photoPath.startsWith('/') ? photoPath : `/${photoPath}`;
         url = `${environment.apiPath}${relative}`;
       }
 

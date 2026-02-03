@@ -94,7 +94,7 @@ export default class MiPerfilPageComponent {
 
   get avatarUrl(): string {
     const u = this.user();
-    return u?.fotoUrl || 'images/user-default.png';
+    return u?.photoUrl || 'images/user-default.png';
   }
 
   openEdit() {

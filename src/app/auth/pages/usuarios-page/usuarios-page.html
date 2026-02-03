@@ -63,14 +63,13 @@
                         <td class="px-2 py-2 text-center border border-gray-300">{{ (pagination().page - 1) *
                             pagination().pageSize + i + 1 }}</td>
                         <td class="px-2 py-2 border border-gray-300">{{ u.userName }}</td>
-                        <td class="px-2 py-2 border border-gray-300">{{ u.nombreCompleto || (u.nombre1 + ' ' +
-                            u.apellido1) }}</td>
+                        <td class="px-2 py-2 border border-gray-300">{{ u.fullName }}</td>
                         <td class="px-2 py-2 border border-gray-300">{{ getRolName(u.rolId) }}</td>
                         <td class="px-2 py-2 border border-gray-300">{{ getPuestoName(u.puestoId) }}</td>
                         <td class="px-2 py-2 text-center border border-gray-300">
                             <label [for]="'switch-' + u.userId" class="relative inline-block w-8 h-4 cursor-pointer">
-                                <input type="checkbox" [id]="'switch-' + u.userId" [checked]="u.activo"
-                                    (change)="toggleStatus(u, cbxActivo.checked)" [value]="u.activo" #cbxActivo
+                                <input type="checkbox" [id]="'switch-' + u.userId" [checked]="u.active"
+                                    (change)="toggleStatus(u, cbxActivo.checked)" [value]="u.active" #cbxActivo
                                     [disabled]="u.rol?.esAdmin" class="peer sr-only">
                                 <span
                                     class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>

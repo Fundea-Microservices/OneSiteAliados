@@ -9,20 +9,14 @@ export interface IPuesto {
 
 export interface IUsuario {
   userId?: string;             // UUID del usuario
-  nombreCompleto: string;        // Nombre completo concatenado
-  nombre1: string;               // Primer nombre
-  nombre2?: string | null;       // Segundo nombre
-  nombre3?: string | null;       // Tercer nombre
-  apellido1: string;             // Primer apellido
-  apellido2?: string | null;     // Segundo apellido
-  apellido3?: string | null;     // Tercer apellido
+  fullName: string;        // Nombre completo concatenado  
   userName: string;              // Nombre de usuario (único)
   clave: string;                 // Contraseña (hash)
-  correo: string;                // Correo electrónico (único)
-  fotoUrl?: string | null;       // URL de la foto
+  email: string;                // Correo electrónico (único)
+  photoUrl?: string | null;       // URL de la foto
   lastPasswordUpdate: Date;      // Última actualización de contraseña
   huella?: string | null;        // Huella digital (en base64 u otro formato)
-  activo: boolean;               // Estado del usuario (activo/inactivo)
+  active: boolean;               // Estado del usuario (activo/inactivo)
   rolId: string;                 // ID del rol asignado
   puestoId?: string | null;      // ID del puesto (si aplica)
   new?: boolean;                  // Indica si es un usuario nuevo

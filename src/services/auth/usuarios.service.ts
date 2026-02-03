@@ -14,8 +14,8 @@ type UsuarioListResponse = ApiResponse<IUsuario[]>;
 @Injectable({ providedIn: 'root' })
 export class UsuariosService extends HttpService {
   private readonly endpoints = {
-    usuarios: '/config/usuarios',
-    cambiarClave: '/config/usuarios/cambiar-clave',
+    usuarios: '/aliado/usuarios',
+    cambiarClave: '/aliado/cambiar-clave',
     files: '/files'
   };
 
@@ -54,9 +54,9 @@ export class UsuariosService extends HttpService {
 
   async createUsuario(usuario: Omit<IUsuario, 'usuarioId' | 'created_at' | 'updated_at' | 'deleted_at'>): Promise<UsuarioResponse | null> {
     try {
-      const { nombre1, nombre2, nombre3, apellido1, apellido2, apellido3, userName, correo, rolId, puestoId, activo, clave } = usuario;
+      const { userName, email, rolId, puestoId, active, clave } = usuario;
       const resp = await firstValueFrom(this.post<UsuarioResponse>(`${this.endpoints.usuarios}`, {
-        nombre1, nombre2, nombre3, apellido1, apellido2, apellido3, userName, correo, rolId, puestoId, activo, clave
+        userName, email, rolId, puestoId, active, clave
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
@@ -72,9 +72,9 @@ export class UsuariosService extends HttpService {
 
   async updateUsuario(usuario: IUsuario): Promise<UsuarioResponse | null> {
     try {
-      const { userId, nombre1, nombre2, nombre3, apellido1, apellido2, apellido3, userName, correo, rolId, puestoId, activo } = usuario;
+      const { userId, userName, email, rolId, puestoId, active } = usuario;
       const resp = await firstValueFrom(this.put<UsuarioResponse>(`${this.endpoints.usuarios}/${userId}`, {
-        nombre1, nombre2, nombre3, apellido1, apellido2, apellido3, userName, correo, rolId, puestoId, activo
+        userName, email, rolId, puestoId, active
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
@@ -103,9 +103,9 @@ export class UsuariosService extends HttpService {
     }
   }
 
-  async cambiarClave(usuarioId: string, claveAnterior: string, claveNueva: string): Promise<ApiResponse | null> {
+  async cambiarClave(userId: string, current: string, newPassword: string): Promise<ApiResponse | null> {
     try {
-      const resp = await firstValueFrom(this.post<ApiResponse>(`${this.endpoints.cambiarClave}`, { usuarioId, claveAnterior, claveNueva }));
+      const resp = await firstValueFrom(this.post<ApiResponse>(`${this.endpoints.cambiarClave}`, { userId, current, newPassword }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message || 'Contraseña actualizada', 'Éxito');
         return resp.body;

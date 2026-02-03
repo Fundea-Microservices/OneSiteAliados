@@ -10,14 +10,12 @@ import { CustomIconComponent } from '../../../shared/components/custom-icon/cust
 
 const emptyUsuario: IUsuario = {
   userId: '',
-  nombreCompleto: '',
-  nombre1: '',
-  apellido1: '',
+  fullName: '',
   userName: '',
   clave: '',
-  correo: '',
+  email: '',
   lastPasswordUpdate: new Date(),
-  activo: true,
+  active: true,
   rolId: '',
   puestoId: '',
   created_at: new Date(),
@@ -209,7 +207,7 @@ export default class UsuariosPageComponent {
   async toggleStatus(usuario: IUsuario, status: boolean) {
     const updatedUsuario: IUsuario = {
       ...usuario,
-      activo: status
+      active: status
     };
     this.updateUsuario(updatedUsuario);
   }

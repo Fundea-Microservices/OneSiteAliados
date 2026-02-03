@@ -33,10 +33,10 @@
                     duration-200"
                     aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                     <img class="shrink-0 size-8 rounded-full ring-2 ring-blue-500"
-                        [src]="user().fotoUrl || 'images/user-default.png'"
+                        [src]="user().photoUrl || 'images/user-default.png'"
                         alt="Avatar">
                     <div class="text-left">
-                        <div class="font-medium text-[#1e2328]">{{user().nombre1}} {{user().apellido1}}</div>
+                        <div class="font-medium text-[#1e2328]">{{user().fullName}}</div>
                         <div class="text-xs text-[#979a9c]">{{user().rol?.nombre || 'Sin rol'}}</div>
                     </div>
                     <svg class="hs-dropdown-open:rotate-180 shrink-0 size-4 ml-auto transition-transform duration-200"
@@ -53,10 +53,10 @@
                     <div class="py-3 px-4 ">
                         <div class="flex items-center gap-x-3">
                             <img class="shrink-0 size-10 rounded-full"
-                                [src]="user().fotoUrl || 'images/user-default.png'"
+                                [src]="user().photoUrl || 'images/user-default.png'"
                                 alt="Avatar">
                             <div>
-                                <div class="font-medium">{{user().nombre1}} {{user().apellido1}}</div>
+                                <div class="font-medium">{{user().fullName}}</div>
                                 <div class="text-xs text-[#979a9c]">{{user().userName}}</div>
                             </div>
                         </div>
