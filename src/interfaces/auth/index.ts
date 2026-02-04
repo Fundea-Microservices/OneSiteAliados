@@ -76,9 +76,10 @@ export interface ISubmenu {
 export interface IRol {
     rolId?: string;          // UUID
     nombre: string;         // Nombre del rol
-    invitado: boolean;      // Indica si es rol invitado
     activo: boolean;        // Indica si está activo
     esAdmin: boolean;       // Indica si tiene privilegios de administrador
+    global: boolean;
+    empresaId?: string,
 
     // Relaciones
     usuarios?: IUsuario[];  // Usuarios asociados al rol

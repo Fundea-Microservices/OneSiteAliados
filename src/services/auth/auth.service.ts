@@ -20,9 +20,11 @@ export class AuthService extends HttpService {
   // Signal para el estado del usuario
   private _user = signal<IUsuario>(this.loadUserFromStorage());
   private _accesos = signal<IAcceso[]>(this.loadAccesosFromStorage());
+  private _empresas = signal<any[]>(this.loadEmpresasFromStorage());
   private _accesosLoading = signal<boolean>(false);
   public user = this._user.asReadonly();
   public accesos = this._accesos.asReadonly();
+  public empresas = this._empresas.asReadonly();
   public accesosLoading = this._accesosLoading.asReadonly();
 
   private httpClient: HttpClient;
@@ -65,7 +67,7 @@ export class AuthService extends HttpService {
         rolId: '',
         nombre: 'Sin autenticar',
         activo: false,
-        invitado: false,
+        global: false,
         esAdmin: false,
         created_at: new Date()
       }
@@ -79,6 +81,13 @@ export class AuthService extends HttpService {
     // Accesos "vacíos"
     return [];
   }
+
+  private loadEmpresasFromStorage(): any[] {
+    const empresas = localStorage.getItem('empresas');
+    if (empresas) return JSON.parse(empresas);
+    return [];
+  }
+  
 
 
   /** Obtener snapshot del usuario actual */
@@ -100,6 +109,12 @@ export class AuthService extends HttpService {
   updateAccesos(accesos: IAcceso[]) {
     this._accesos.set(accesos || []);
     localStorage.setItem('accesos', JSON.stringify(accesos || []));
+  }
+
+  /** Actualizar empresas en memoria y storage */
+  updateEmpresas(empresas: any[]) {
+    this._empresas.set(empresas || []);
+    localStorage.setItem('empresas', JSON.stringify(empresas || []));
   }
 
   /** Cambiar estado de carga de accesos */
@@ -222,10 +237,12 @@ export class AuthService extends HttpService {
     localStorage.removeItem('user');
     localStorage.removeItem('accesos');
     localStorage.removeItem('empresa');
+    localStorage.removeItem('empresas');
 
     // Resetear signal del usuario
     this._user.set(this.loadUserFromStorage());
     this._accesos.set(this.loadAccesosFromStorage());
+    this._empresas.set(this.loadEmpresasFromStorage());
     this._accesosLoading.set(false);
   }
 }

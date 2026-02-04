@@ -71,9 +71,13 @@
                         </a>
 
                         <a class="flex items-center gap-x-3 py-2 px-4 text-sm hover:bg-[#eef0f2] hover:text-blue-400 focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200"
-                            href="#" role="menuitem">
-                            <app-custom-icon [name]="'cog'" [color]="'#1e2328'"></app-custom-icon>
-                            Configuración
+                            [class.opacity-50]="empresas().length <= 1"
+                            [class.cursor-not-allowed]="empresas().length <= 1"
+                            [class.pointer-events-none]="empresas().length <= 1"
+                            (click)="openCompanySelectionModal($event)"
+                            role="menuitem">
+                            <app-custom-icon [name]="'building'" [color]="'#1e2328'"></app-custom-icon>
+                            Cambiar Empresa
                         </a>
                     </div>
 

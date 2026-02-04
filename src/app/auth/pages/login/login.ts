@@ -60,6 +60,11 @@ export default class LoginComponent {
         localStorage.setItem('token', authData?.data.token || '');
         localStorage.setItem('usuario', JSON.stringify(authData?.data.user || {}));
 
+        // Guardar empresas en el servicio y localStorage
+        if (authData?.data?.empresas) {
+          this.authService.updateEmpresas(authData.data.empresas);
+        }
+
         // TO DO: Habilitar carga de accesos por rol
         // Obtener accesos por rol y guardarlos en localStorage
         // try {
