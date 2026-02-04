@@ -14,7 +14,7 @@
     <div class="flex items-center gap-2">
       <button (click)="openEdit()" class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">Editar perfil</button>
       <button (click)="openPasswordModal()" class="px-4 py-2 text-sm bg-amber-600 text-white rounded hover:bg-amber-700">Cambiar contraseña</button>
-      <button (click)="onChangePhotoClick()" class="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700">Cambiar foto</button>
+      
       <input #photoInput type="file" accept="image/png, image/jpeg" class="hidden" (change)="onPhotoSelected($event)" />
     </div>
   </div>
@@ -59,11 +59,11 @@
         <h3 id="hs-upsert-mi-perfil-label" class="font-bold text-gray-800">Editar perfil</h3>
         <button type="button" (click)="closeModals()" class="size-8 inline-flex justify-center items-center rounded-full bg-gray-100 hover:bg-gray-200">✕</button>
       </div>
-      <div class="p-4 overflow-y-auto">
+      <!-- <div class="p-4 overflow-y-auto">
         <app-upsert-usuario [usuario]="user()" [roles]="roles()" [puestos]="puestos()" [nuevo]="false" [key]="formKey()" [autoEdit]="true"
           (save)="onSaveUsuario($event)" (cancel)="closeModals()" />
         <div class="mt-2 text-xs text-gray-500">Nota: En esta vista solo se editan datos propios. Campos de rol/puesto podrían estar restringidos por permisos.</div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

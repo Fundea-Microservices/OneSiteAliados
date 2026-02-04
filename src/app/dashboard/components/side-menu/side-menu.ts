@@ -35,6 +35,12 @@ export default class SideMenuComponent implements AfterViewInit {
     }, 100);
   }
 
+  //Obtenemos la empresa en el local storage
+  get empresa() {
+    const empresaStorage = localStorage.getItem('empresa');
+    return empresaStorage ? JSON.parse(empresaStorage) : null;
+  }
+
   onCloseSidebar() {
     this.closeSidebar.emit();
   }

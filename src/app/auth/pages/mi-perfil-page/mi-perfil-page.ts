@@ -11,7 +11,7 @@ import { IRol, IPuesto } from '../../../../interfaces/auth';
 @Component({
   selector: 'app-mi-perfil-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, UpsertUsuarioComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './mi-perfil-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,12 +43,12 @@ export default class MiPerfilPageComponent {
 
   async ngOnInit() {
     // Cargar roles y puestos para el modal de edición del perfil
-    const [r, p] = await Promise.all([
-      this.rolService.getRoles({ all: true }),
-      this.puestoService.getPuestos({ all: true })
-    ]);
-    if (r?.success) this.roles.set(r.data || []);
-    if (p?.success) this.puestos.set(p.data || []);
+    // const [r, p] = await Promise.all([
+    //   this.rolService.getRoles({ all: true }),
+    //   this.puestoService.getPuestos({ all: true })
+    // ]);
+    // if (r?.success) this.roles.set(r.data || []);
+    // if (p?.success) this.puestos.set(p.data || []);
 
     // Verificar si se debe forzar el cambio de contraseña
     this.route.queryParams.subscribe(params => {
