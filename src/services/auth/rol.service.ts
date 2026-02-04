@@ -16,7 +16,7 @@ type RolListResponse = ApiResponse<IRol[]>;
 export class RolService extends HttpService {
 
   private readonly endpoints = {
-    empresa: '/config/rol',
+    rol: '/aliado/rol',
   };
 
   constructor(http: HttpClient, private toastr: ToastrService) {
@@ -25,6 +25,18 @@ export class RolService extends HttpService {
 
   async getRoles({ page = 1, limit = 10, busqueda = '', all = false } = {}): Promise<RolListResponse | null> {
     try {
+      // Obtener empresaId del localStorage
+      let empresaId: string | undefined;
+      const empresaData = localStorage.getItem('empresa');
+      if (empresaData) {
+        try {
+          const empresa = JSON.parse(empresaData);
+          empresaId = empresa.empresaId;
+        } catch (error) {
+          console.error('Error al parsear datos de empresa del localStorage:', error);
+        }
+      }
+
       let params: any = {
         page,
         limit,
@@ -33,9 +45,12 @@ export class RolService extends HttpService {
       if (all) {
         params = {...params, todos: all};
       }
-      const resp = await firstValueFrom(this.get<RolListResponse>(`${this.endpoints.empresa}`, params));
+      if (empresaId) {
+        params = {...params, empresaId};
+      }
+      const resp = await firstValueFrom(this.get<RolListResponse>(`${this.endpoints.rol}`, params));
       if (resp.body?.success) {        
-        // this.toastr.success(resp.body.message, 'Success');      
+        // this.toastr.success(resp.body.message, 'Success');     
         return resp.body;
       }
 
@@ -49,7 +64,8 @@ export class RolService extends HttpService {
 
   async getRol(rolId: string): Promise<RolResponse | null> {
     try {
-      const resp = await firstValueFrom(this.get<RolResponse>(`${this.endpoints.empresa}/${rolId}`));
+      const resp = await firstValueFrom(this.get<RolResponse>(`${this.endpoints.rol}/${rolId}`));
+      console.log("🚀 ~ RolService ~ getRol ~ resp:", resp)
       if (resp.body?.success) {
         return resp.body;
       }
@@ -65,12 +81,16 @@ export class RolService extends HttpService {
   async updateRol(rolUpdate: IRol): Promise<RolResponse | null> {
     try {
       // Preparamos los datos para actualizar
-      const { rolId, nombre, activo, invitado } = rolUpdate;
-      const resp = await firstValueFrom(this.put<RolResponse>(`${this.endpoints.empresa}/${rolId}`, {
+      const { rolId, nombre, activo, global, esAdmin, empresaId } = rolUpdate;
+      const payload = {
         nombre,
         activo,
-        invitado,
-      }));          
+        global,
+        esAdmin,
+        empresaId
+      };
+      console.log('📤 Datos enviados para actualizar rol:', payload);
+      const resp = await firstValueFrom(this.put<RolResponse>(`${this.endpoints.rol}/${rolId}`, payload));          
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
         return resp.body;
@@ -87,10 +107,16 @@ export class RolService extends HttpService {
   async createRol(createRol: Omit<IRol, 'rolId'>): Promise<RolResponse | null> {
     try {
       // Obtenemos solo lo necesario para crear el rol
-      const { nombre } = createRol;
-      const resp = await firstValueFrom(this.post<RolResponse>(`${this.endpoints.empresa}`, {
-        nombre
-      }));
+      const { nombre, activo } = createRol;
+      const payload = {
+        nombre,
+        activo,
+        global: false,
+        esAdmin:false,
+        empresaId: createRol.empresaId
+      };
+      console.log('📤 Datos enviados para crear rol:', payload);
+      const resp = await firstValueFrom(this.post<RolResponse>(`${this.endpoints.rol}`, payload));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
         return resp.body;
@@ -106,7 +132,7 @@ export class RolService extends HttpService {
 
   async deleteRol(rolId: string): Promise<RolResponse | null> {
     try {
-      const resp = await firstValueFrom(this.delete<RolResponse>(`${this.endpoints.empresa}/${rolId}`));
+      const resp = await firstValueFrom(this.delete<RolResponse>(`${this.endpoints.rol}/${rolId}`));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
         return resp.body;

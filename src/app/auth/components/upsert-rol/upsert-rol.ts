@@ -52,7 +52,7 @@ export class UpsertRolComponent {
     const newForm = this.fb.group({
       nombre: [rol.nombre, this.validationRules.name],
       activo: [rol.activo],
-      invitado: [rol.invitado],
+      global: [rol.global],
       esAdmin: [rol.esAdmin],
       created_at: [rol.created_at],
     });
@@ -61,7 +61,7 @@ export class UpsertRolComponent {
       newForm.reset({
         nombre: '',
         activo: true,
-        invitado: false,
+        global: false,
         esAdmin: false,
         created_at: new Date(),
       });

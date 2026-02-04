@@ -12,7 +12,7 @@ import { UpsertRolComponent } from '../../components/upsert-rol/upsert-rol';
 const emptyRol: IRol = {
   rolId: '',
   nombre: '',
-  invitado: false,
+  global: false,
   esAdmin: false,
   activo: true,
   created_at: new Date(),
@@ -32,7 +32,7 @@ export default class RolPageComponent {
   rolEdit = signal<IRol>({
     rolId: '',
     nombre: '',
-    invitado: false,
+    global: false,
     esAdmin: false,
     activo: true,
     created_at: new Date(),
@@ -92,9 +92,12 @@ export default class RolPageComponent {
       limit: this.pagination().pageSize,
       busqueda: this.buscador()
     });
+    console.log("🚀 ~ RolPageComponent ~ fetchData ~ response:", response)
 
     if (response?.success) {
-      this.rolesList.set(response.data);
+      // Asegurar que data sea un array
+      const dataArray = Array.isArray(response.data) ? response.data : [];
+      this.rolesList.set(dataArray);
       if (response.metadata) {
         this.pagination.update(p => ({
           ...p,
@@ -204,7 +207,26 @@ export default class RolPageComponent {
 
 
   async createRol(rol: IRol) {
-    let resp = await this.rolService.createRol(rol)
+    // Obtener empresaId del localStorage
+    const empresaData = localStorage.getItem('empresa');
+    let empresaId: string | undefined;
+    
+    if (empresaData) {
+      try {
+        const empresa = JSON.parse(empresaData);
+        empresaId = empresa.empresaId;
+      } catch (error) {
+        console.error('Error al parsear datos de empresa del localStorage:', error);
+      }
+    }
+
+    // Asignar empresaId al rol
+    const rolConEmpresa: IRol = {
+      ...rol,
+      empresaId: empresaId
+    };
+
+    let resp = await this.rolService.createRol(rolConEmpresa)
     if (resp?.success) {
       // Agregar el nuevo rol a la lista local sin recargar toda la tabla
       const nuevoRol = resp.data;
@@ -219,6 +241,7 @@ export default class RolPageComponent {
       this.closeModal();
       this.rolEdit.set(emptyRol)
       this.nuevoRol.set(true); // Reseteamos el estado de nuevo rol
+      this.fetchData();
     }
   }
 
@@ -232,6 +255,7 @@ export default class RolPageComponent {
       );
       
       this.closeModal();
+      this.fetchData();
     }
   }
 
