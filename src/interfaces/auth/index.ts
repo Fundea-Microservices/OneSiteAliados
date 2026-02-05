@@ -11,9 +11,9 @@ export interface IUsuario {
   userId?: string;             // UUID del usuario
   fullName: string;        // Nombre completo concatenado  
   userName: string;              // Nombre de usuario (único)
-  clave: string;                 // Contraseña (hash)
+  password: string;                 // Contraseña (hash)
   email: string;                // Correo electrónico (único)
-  photoUrl?: string | null;       // URL de la foto
+  photoUrl?: string | null;  
   lastPasswordUpdate: Date;      // Última actualización de contraseña
   huella?: string | null;        // Huella digital (en base64 u otro formato)
   active: boolean;               // Estado del usuario (activo/inactivo)

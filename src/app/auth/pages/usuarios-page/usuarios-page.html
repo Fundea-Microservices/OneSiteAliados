@@ -43,7 +43,6 @@
                         <th class="gc-th">Usuario</th>
                         <th class="gc-th">Nombre</th>
                         <th class="gc-th">Rol</th>
-                        <th class="gc-th">Puesto</th>
                         <th class="gc-th">Activo</th>
                         <th class="gc-th">Acciones</th>
                     </tr>
@@ -53,19 +52,18 @@
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-gray-500">Cargando usuarios ...</td>
                     </tr>
-                    } @else if ((usuariosList() || []).length === 0) {
+                    } @else if ((usuariosFiltrados() || []).length === 0) {
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-gray-500">No se encontraron usuarios</td>
                     </tr>
                     } @else {
-                    @for (u of (usuariosList() || []); track u.userId; let i = $index) {
+                    @for (u of (usuariosFiltrados() || []); track u.userId; let i = $index) {
                     <tr class="hover:bg-gray-300 odd:bg-white even:bg-gray-100">
                         <td class="px-2 py-2 text-center border border-gray-300">{{ (pagination().page - 1) *
                             pagination().pageSize + i + 1 }}</td>
                         <td class="px-2 py-2 border border-gray-300">{{ u.userName }}</td>
                         <td class="px-2 py-2 border border-gray-300">{{ u.fullName }}</td>
                         <td class="px-2 py-2 border border-gray-300">{{ getRolName(u.rolId) }}</td>
-                        <td class="px-2 py-2 border border-gray-300">{{ getPuestoName(u.puestoId) }}</td>
                         <td class="px-2 py-2 text-center border border-gray-300">
                             <label [for]="'switch-' + u.userId" class="relative inline-block w-8 h-4 cursor-pointer">
                                 <input type="checkbox" [id]="'switch-' + u.userId" [checked]="u.active"
@@ -119,8 +117,8 @@
                 </button>
             </div>
             <div class="p-4 overflow-y-auto">
-                <app-upsert-usuario [usuario]="usuarioEdit()" [roles]="rolesList()" [puestos]="puestosList()"
-                    [nuevo]="nuevoUsuario()" (save)="upsertUsuario($event)" (cancel)="closeModal()" />
+                <app-upsert-usuario [usuario]="usuarioEdit()" [roles]="rolesFiltrados()" [nuevo]="nuevoUsuario()"
+                    (save)="upsertUsuario($event)" (cancel)="closeModal()" />
             </div>
         </div>
     </div>

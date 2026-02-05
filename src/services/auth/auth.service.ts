@@ -53,7 +53,7 @@ export class AuthService extends HttpService {
       userId: '',
       fullName: 'Sin autenticar',
       userName: '',      
-      clave: '',
+      password: '',
       email: '',
       photoUrl: '',
       lastPasswordUpdate: new Date(),

@@ -14,7 +14,7 @@ type UsuarioListResponse = ApiResponse<IUsuario[]>;
 @Injectable({ providedIn: 'root' })
 export class UsuariosService extends HttpService {
   private readonly endpoints = {
-    usuarios: '/aliado/usuarios',
+    usuarios: '/aliado/usuario',
     cambiarClave: '/aliado/cambiar-clave',
     files: '/files'
   };
@@ -27,8 +27,20 @@ export class UsuariosService extends HttpService {
 
   async getUsuarios({ page = 1, limit = 10, busqueda = '', all = false , puestoNombre = ''} = {}): Promise<UsuarioListResponse | null> {
     try {
-      let params: any = { page, limit, busqueda };
-      if (all) params = { ...params, todos: all };
+      // Obtener empresaId del localStorage
+      let empresaId: string | undefined;
+      const empresaData = localStorage.getItem('empresa');
+      if (empresaData) {
+        try {
+          const empresa = JSON.parse(empresaData);
+          empresaId = empresa.empresaId;
+        } catch (error) {
+          console.error('Error al parsear datos de empresa del localStorage:', error);
+        }
+      }
+
+      let params: any = { page, limit, busqueda, empresaId };
+      if (all) params = { ...params, all: all };
       if (puestoNombre) params = { ...params, puestoNombre}
       const resp = await firstValueFrom(this.get<UsuarioListResponse>(`${this.endpoints.usuarios}`, params));
       if (resp.body?.success) return resp.body;
@@ -54,9 +66,21 @@ export class UsuariosService extends HttpService {
 
   async createUsuario(usuario: Omit<IUsuario, 'usuarioId' | 'created_at' | 'updated_at' | 'deleted_at'>): Promise<UsuarioResponse | null> {
     try {
-      const { userName, email, rolId, puestoId, active, clave } = usuario;
+      // Obtener empresaId del localStorage
+      let empresaId: string | undefined;
+      const empresaData = localStorage.getItem('empresa');
+      if (empresaData) {
+        try {
+          const empresa = JSON.parse(empresaData);
+          empresaId = empresa.empresaId;
+        } catch (error) {
+          console.error('Error al parsear datos de empresa del localStorage:', error);
+        }
+      }
+      
+      const { fullName, userName, email, rolId, active, password } = usuario;
       const resp = await firstValueFrom(this.post<UsuarioResponse>(`${this.endpoints.usuarios}`, {
-        userName, email, rolId, puestoId, active, clave
+        fullName, userName, email, rolId, empresaId, active, password
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');

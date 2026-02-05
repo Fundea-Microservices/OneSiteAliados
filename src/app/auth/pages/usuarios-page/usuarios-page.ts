@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
 import { UsuariosService } from '../../../../services/auth/usuarios.service';
@@ -12,7 +12,7 @@ const emptyUsuario: IUsuario = {
   userId: '',
   fullName: '',
   userName: '',
-  clave: '',
+  password: '',
   email: '',
   lastPasswordUpdate: new Date(),
   active: true,
@@ -30,11 +30,19 @@ const emptyUsuario: IUsuario = {
 export default class UsuariosPageComponent {
   usuariosService = inject(UsuariosService);
   rolService = inject(RolService);
-  puestoService = inject(PuestoService);
 
   usuariosList = signal<IUsuario[]>([]);
   rolesList = signal<IRol[]>([]);
-  puestosList = signal<IPuesto[]>([]);
+
+  // Computed signal que filtra usuarios no admin
+  usuariosFiltrados = computed(() => {
+    return this.usuariosList().filter(u => !u.rol?.esAdmin);
+  });
+
+  // Computed signal que filtra roles que no contengan "repre" en el nombre
+  rolesFiltrados = computed(() => {
+    return this.rolesList().filter(rol => !rol.nombre?.toLowerCase().includes('repre'));
+  });
 
   pagination = signal<IPagination>({ page: 1, pageSize: 10, totalItems: 0 });
   isLoading = signal(false);
@@ -65,12 +73,10 @@ export default class UsuariosPageComponent {
   }
 
   async fetchRolesYPuestos() {
-    const [rolesResp, puestosResp] = await Promise.all([
-      this.rolService.getRoles({ all: true }),
-      this.puestoService.getPuestos({ all: true })
+    const [rolesResp] = await Promise.all([
+      this.rolService.getRoles(),
     ]);
     if (rolesResp?.success) this.rolesList.set(rolesResp.data || []);
-    if (puestosResp?.success) this.puestosList.set(puestosResp.data || []);
   }
 
   async fetchData() {
@@ -163,6 +169,7 @@ export default class UsuariosPageComponent {
       this.closeModal();
       this.usuarioEdit.set({ ...emptyUsuario });
       this.nuevoUsuario.set(true);
+      this.fetchData();
     }
   }
 
@@ -193,12 +200,6 @@ export default class UsuariosPageComponent {
   getRolName(rolId: string): string {
     const r = (this.rolesList() || []).find(r => r.rolId === rolId);
     return r?.nombre ?? '-';
-  }
-
-  getPuestoName(puestoId?: string | null): string {
-    if (!puestoId) return '-';
-    const p = (this.puestosList() || []).find(p => p.puestoId === puestoId);
-    return p?.nombre ?? '-';
   }
 
    /**

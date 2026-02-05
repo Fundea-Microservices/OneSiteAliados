@@ -42,22 +42,24 @@ export class UpsertUsuarioComponent {
 
       const newForm = this.fb.group({        
         userName: [u?.userName ?? '', [Validators.required, Validators.minLength(4)]],
+        fullName: [u?.fullName ?? '', [Validators.required, Validators.minLength(4)]],
         email: [u?.email ?? '', [Validators.required, Validators.email]],
         rolId: [u?.rolId ?? '', [Validators.required]],
         puestoId: [u?.puestoId ?? ''],
         active: [u?.active ?? true],
-        clave: [''], // solo requerido al crear
+        password: [''], // solo requerido al crear
       });
 
       if (isNuevo) {
         newForm.get('clave')?.addValidators([Validators.required, Validators.minLength(6)]);
-        newForm.reset({          
+        newForm.reset({ 
+          fullName: '',         
           userName: '',
           email: '',
           rolId: '',
-          puestoId: '',
+          puestoId: undefined,
           active: true,
-          clave: '',
+          password: '',
         });
       }
 
