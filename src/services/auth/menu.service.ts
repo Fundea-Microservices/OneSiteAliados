@@ -13,16 +13,16 @@ export type MenuListResponse = ApiResponse<IMenu[]>;
 @Injectable({ providedIn: 'root' })
 export class MenuService extends HttpService {
   private readonly endpoints = {
-    menus: '/auth/menus',
+    menus: '/aliado/menu',
   };
 
   constructor(http: HttpClient, private toastr: ToastrService) {
     super(http);
   }
 
-  async getMenus({ page = 1, limit = 10, busqueda = '', principal, all = false }: { page?: number; limit?: number; busqueda?: string; principal?: boolean; all?: boolean } = {}): Promise<MenuListResponse | null> {
+  async getMenus({ page = 1, limit = 10, search = '', principal, all = false }: { page?: number; limit?: number; search?: string; principal?: boolean; all?: boolean } = {}): Promise<MenuListResponse | null> {
     try {
-      let params: any = { page, limit, busqueda };
+      let params: any = { page, limit, search };
       if (principal !== undefined) params.principal = principal;
       if (all) params = { ...params, todos: all };
       const resp = await firstValueFrom(this.get<MenuListResponse>(`${this.endpoints.menus}`, params));
@@ -49,9 +49,9 @@ export class MenuService extends HttpService {
 
   async createMenu(menu: Omit<IMenu, 'menuId' | 'created_at' | 'updated_at' | 'deleted_at'>): Promise<MenuResponse | null> {
     try {
-      const { label, descripcion, color, icono, pathApp, pathWeb, principal, activo } = menu;
+      const { label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo } = menu;
       const resp = await firstValueFrom(this.post<MenuResponse>(`${this.endpoints.menus}`, {
-        label, descripcion, color, icono, pathApp, pathWeb, principal, activo
+        label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
@@ -67,9 +67,9 @@ export class MenuService extends HttpService {
 
   async updateMenu(menu: IMenu): Promise<MenuResponse | null> {
     try {
-      const { menuId, label, descripcion, color, icono, pathApp, pathWeb, principal, activo } = menu;
+      const { menuId, label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo } = menu;
       const resp = await firstValueFrom(this.put<MenuResponse>(`${this.endpoints.menus}/${menuId}`, {
-        label, descripcion, color, icono, pathApp, pathWeb, principal, activo
+        label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');

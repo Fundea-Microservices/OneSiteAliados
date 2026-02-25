@@ -55,10 +55,11 @@ export class UpsertMenuComponent implements OnDestroy {
       const newForm = this.fb.group({
         label: [m.label || '', [Validators.required, Validators.minLength(3)]],
         descripcion: [m.descripcion || ''],
+        tramaId: [m.tramaId || ''],
         icono: [m.icono || ''],
         color: [colorInitVal],
-        pathApp: [m.pathApp || ''],
-        pathWeb: [m.pathWeb || ''],
+        rutaApp: [m.rutaApp || ''],
+        rutaWeb: [m.rutaWeb || ''],
         principal: [principalInit],
         activo: [m.activo ?? false],
         created_at: [m.created_at || new Date()],

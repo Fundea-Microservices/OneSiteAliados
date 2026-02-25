@@ -33,7 +33,7 @@ export class AccessGuard implements CanActivate {
     const isAllowed = accesos.some(a => {
         return (
             a.subMenus || []).some(s => {
-                const raw = (s.menu?.pathWeb || '').replace(/^\/+|\/+$/g, '');
+                const raw = (s.menu?.rutaWeb || '').replace(/^\/+|\/+$/g, '');
                 
         if (!raw) return false;
   

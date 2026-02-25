@@ -32,7 +32,7 @@ export interface IUsuario {
 
 export interface IAcceso {
   accesoId?: string;              // UUID del acceso
-  ordenMenu: number;             // Orden del menú
+  orden: number;             // Orden del menú
   showApp: boolean;              // Si se muestra en la app móvil
   showWeb: boolean;              // Si se muestra en la web
   activo: boolean;               // Estado del acceso
@@ -54,7 +54,7 @@ export interface IAcceso {
 
 export interface ISubmenu {
   accesoId?: string;              // UUID del acceso
-  ordenMenu: number;             // Orden del menú
+  orden: number;             // Orden del menú
   showApp: boolean;              // Si se muestra en la app móvil
   showWeb: boolean;              // Si se muestra en la web
   activo: boolean;               // Estado del acceso
@@ -100,23 +100,24 @@ export interface ILogin {
 
 
 export interface IMenu {
-  menuId?: string;        // UUID del menú
-  label: string;          // Nombre o etiqueta del menú
-  descripcion: string;    // Descripción del menú
-  pathApp: string;        // Ruta de la aplicación móvil o cliente
-  pathWeb: string;        // Ruta de la aplicación web
-  icono: string;          // Nombre del ícono asociado
-  color: string;          // Color del ícono o del menú
-  principal: boolean;     // Indica si es un menú principal
-  activo: boolean;        // Indica si el menú está activo
+  menuId: string;
+  label: string;
+  descripcion?: string;
+  rutaApp?: string;
+  rutaWeb?: string;
+  tramaId?: string;
+  icono: string;
+  color: string;
+  principal: boolean;
+  activo: boolean;
+  
+  // Auditoría (vienen como ISO strings desde el JSON del backend)
+  created_at?: Date | string;
+  updated_at?: string;
+  deleted_at?: string;
 
-  // Relaciones
-  accesos?: IAcceso[];    // Lista de accesos asociados al menú
-
-  // Metadatos de auditoría
-  created_at: Date;       // Fecha de creación
-  updated_at?: Date | null; // Fecha de última actualización
-  deleted_at?: Date | null; // Fecha de eliminación (soft delete)
+  // Relaciones (Opcionales, dependen de si tu API hace un 'populate' o JOIN)
+  accesos?: IAcceso[];
 }
 
 export enum TipoConfiguracion {

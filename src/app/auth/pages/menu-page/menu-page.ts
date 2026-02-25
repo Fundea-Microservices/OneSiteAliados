@@ -11,10 +11,11 @@ const emptyMenu: IMenu = {
   menuId: '',
   label: '',
   descripcion: '',
+  tramaId: '',
   icono: '',
   color: '',
-  pathApp: '',
-  pathWeb: '',
+  rutaApp: '',
+  rutaWeb: '',
   principal: true,
   activo: true,
   created_at: new Date(),
@@ -229,7 +230,7 @@ export default class MenuPageComponent {
     if (this.isLoadingMenus()) return;
     this.isLoadingMenus.set(true);
     const { page, pageSize } = this.paginationMenus();
-    const resp = await this.menuService.getMenus({ page, limit: pageSize, busqueda: this.buscadorMenus(), principal: true });
+    const resp = await this.menuService.getMenus({ page, limit: pageSize, search: this.buscadorMenus(), principal: true });
     if (resp?.success) {
       const data = resp.data || [];
       this.menusPrincipales.set(data);
@@ -247,7 +248,7 @@ export default class MenuPageComponent {
     if (this.isLoadingSubs()) return;
     this.isLoadingSubs.set(true);
     const { page, pageSize } = this.paginationSubs();
-    const resp = await this.menuService.getMenus({ page, limit: pageSize, busqueda: this.buscadorSubs(), principal: false });
+    const resp = await this.menuService.getMenus({ page, limit: pageSize, search: this.buscadorSubs(), principal: false });
     if (resp?.success) {
       const data = resp.data || [];
       this.submenus.set(data);

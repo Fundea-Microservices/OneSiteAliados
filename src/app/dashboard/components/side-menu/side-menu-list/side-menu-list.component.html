@@ -41,6 +41,18 @@
                 [id]="'config' + '-content'"
                 [attr.aria-labelledby]="'config' + '-btn'">
                 <div class="pl-6 space-y-1 mt-1">
+                    <a [routerLink]="'config/accesos'"
+                            routerLinkActive="bg-[#eef0f2] text-[#1e2328] border-l-4 border-blue-400"
+                            class="flex items-center gap-x-3 py-2 px-3 text-sm  font-medium hover:bg-[#eef0f2] hover:text-[#1e2328] focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200">
+                            <app-custom-icon [name]="'user-check'" [size]="15" [color]="'#1e2328'"></app-custom-icon>
+                            {{'Accesos'}}
+                        </a>
+                        <a [routerLink]="'config/menus'"
+                            routerLinkActive="bg-[#eef0f2] text-[#1e2328] border-l-4 border-blue-400"
+                            class="flex items-center gap-x-3 py-2 px-3 text-sm  font-medium hover:bg-[#eef0f2] hover:text-[#1e2328] focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200">
+                            <app-custom-icon [name]="'user-check'" [size]="15" [color]="'#1e2328'"></app-custom-icon>
+                            {{'Menús'}}
+                        </a>
                         <a [routerLink]="'config/usuarios'"
                             routerLinkActive="bg-[#eef0f2] text-[#1e2328] border-l-4 border-blue-400"
                             class="flex items-center gap-x-3 py-2 px-3 text-sm  font-medium hover:bg-[#eef0f2] hover:text-[#1e2328] focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200">
@@ -84,7 +96,7 @@
                 [attr.aria-labelledby]="acceso.accesoId + '-btn'">
                 <div class="pl-6 space-y-1 mt-1">
                     @for(submenu of acceso.subMenus; track submenu.accesoId){
-                        <a [routerLink]="prefix + submenu.menu.pathWeb"
+                        <a [routerLink]="prefix + submenu.menu.rutaWeb"
                             routerLinkActive="bg-[#eef0f2] text-[#1e2328] border-l-4 border-blue-400"
                             class="flex items-center gap-x-3 py-2 px-3 text-sm  font-medium hover:bg-[#eef0f2] hover:text-[#1e2328] focus:outline-none focus:bg-[#eef0f2] transition-colors duration-200">
                             <app-custom-icon [name]="submenu.menu.icono" [size]="15" [color]="submenu.menu.color"></app-custom-icon>
