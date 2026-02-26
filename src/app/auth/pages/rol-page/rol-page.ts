@@ -241,7 +241,6 @@ export default class RolPageComponent {
       this.closeModal();
       this.rolEdit.set(emptyRol)
       this.nuevoRol.set(true); // Reseteamos el estado de nuevo rol
-      this.fetchData();
     }
   }
 
@@ -255,7 +254,6 @@ export default class RolPageComponent {
       );
       
       this.closeModal();
-      this.fetchData();
     }
   }
 

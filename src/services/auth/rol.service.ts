@@ -43,7 +43,7 @@ export class RolService extends HttpService {
         busqueda
       }
       if (all) {
-        params = {...params, todos: all};
+        params = {...params, all: all};
       }
       if (empresaId) {
         params = {...params, empresaId};

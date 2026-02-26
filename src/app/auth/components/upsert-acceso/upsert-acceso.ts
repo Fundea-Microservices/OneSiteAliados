@@ -61,14 +61,14 @@ export default class UpsertAccesoComponent {
     if (m.principal) {
       const principales = acc.filter(a => a.menu?.principal);
       for (const a of principales) {
-        opciones.push({ value: a.ordenMenu, label: `Antes de ${a.menu?.label}` });
+        opciones.push({ value: a.orden, label: `Antes de ${a.menu?.label}` });
       }
     } else {
       const mainId = this.form().get('mainMenuId')?.value as string | null;
       if (mainId) {
         const sub = acc.filter(a => a.mainMenuId === mainId && !a.menu?.principal);
         for (const a of sub) {
-          opciones.push({ value: a.ordenMenu, label: `Antes de ${a.menu?.label}` });
+          opciones.push({ value: a.orden, label: `Antes de ${a.menu?.label}` });
         }
       }
     }
@@ -84,7 +84,7 @@ export default class UpsertAccesoComponent {
       menuId: value.menuId,
       rolId: value.rolId,
       mainMenuId: value.mainMenuId,
-      ordenMenu: Number(value.ordenMenu),
+      orden: Number(value.ordenMenu),
       showApp: !!value.showApp,
       showWeb: !!value.showWeb,
       activo: !!value.activo,

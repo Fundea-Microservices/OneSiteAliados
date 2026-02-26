@@ -24,7 +24,7 @@ export class MenuService extends HttpService {
     try {
       let params: any = { page, limit, search };
       if (principal !== undefined) params.principal = principal;
-      if (all) params = { ...params, todos: all };
+      if (all) params = { ...params, all: all };
       const resp = await firstValueFrom(this.get<MenuListResponse>(`${this.endpoints.menus}`, params));
       if (resp.body?.success) return resp.body;
       return null;

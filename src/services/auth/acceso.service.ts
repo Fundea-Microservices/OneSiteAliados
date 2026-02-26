@@ -11,7 +11,7 @@ export type AccesoListResponse = ApiResponse<IAcceso[]>;
 
 @Injectable({ providedIn: 'root' })
 export class AccesoService extends HttpService {
-  private readonly endpoints = { base: '/aliado/accesos' };
+  private readonly endpoints = { base: '/aliado/acceso' };
 
   constructor(http: HttpClient, private toastr: ToastrService) {
     super(http);
@@ -19,7 +19,7 @@ export class AccesoService extends HttpService {
 
   async getAccesosByRol(rolId: string): Promise<AccesoListResponse | null> {
     try {
-      const resp = await firstValueFrom(this.get<AccesoListResponse>(`${this.endpoints.base}/${rolId}/rol`));
+      const resp = await firstValueFrom(this.get<AccesoListResponse>(`${this.endpoints.base}/rol/${rolId}`));
       if (resp.body?.success) return resp.body;
       return null;
     } catch (error: any) {
@@ -46,9 +46,9 @@ export class AccesoService extends HttpService {
 
   async updateAcceso(acceso: IAcceso): Promise<AccesoResponse | null> {
     try {
-      const { accesoId, ordenMenu, showApp, showWeb, activo, mainMenuId, menuId, rolId } = acceso as IAcceso;
+      const { accesoId, orden, showApp, showWeb, activo, mainMenuId, menuId, rolId } = acceso as IAcceso;
       const resp = await firstValueFrom(
-        this.put<AccesoResponse>(`${this.endpoints.base}/${accesoId}`, { ordenMenu, showApp, showWeb, activo, mainMenuId, menuId, rolId })
+        this.put<AccesoResponse>(`${this.endpoints.base}`, { accesoId, orden, showApp, showWeb, activo, mainMenuId, menuId, rolId })
       );
       if (resp.body?.success) {
         this.toastr.success(resp.body.message || 'Acceso actualizado', 'Éxito');

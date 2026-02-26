@@ -169,7 +169,6 @@ export default class UsuariosPageComponent {
       this.closeModal();
       this.usuarioEdit.set({ ...emptyUsuario });
       this.nuevoUsuario.set(true);
-      this.fetchData();
     }
   }
 

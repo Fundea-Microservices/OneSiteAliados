@@ -19,6 +19,7 @@ export default class AccesoPageComponent {
   private rolService = inject(RolService);
   private menuService = inject(MenuService);
   private accesoService = inject(AccesoService);
+  private empresaId = signal<string>('');
 
   roles = signal<IRol[]>([]);
   selectedRolId = signal<string>('');
@@ -34,13 +35,31 @@ export default class AccesoPageComponent {
   filterSubmenus = signal<string>('');
 
   ngOnInit() {
+    this.empresaId.set(this.getEmpresaIdFromStorage());
     this.loadRoles();
     this.loadMenus();
+  }
+
+  private getEmpresaIdFromStorage(): string {
+    const empresaData = localStorage.getItem('empresa');
+    if (!empresaData) return '';
+    try {
+      const empresa = JSON.parse(empresaData);
+      return empresa?.empresaId || '';
+    } catch {
+      return '';
+    }
   }
 
   async loadRoles() {
     const r = await this.rolService.getRoles({ all: true });
     if (r?.success) this.roles.set(r.data || []);
+  }
+
+  rolesEmpresa(): IRol[] {
+    const currentEmpresaId = this.empresaId();
+    if (!currentEmpresaId) return [];
+    return (this.roles() || []).filter(role => role.empresaId === currentEmpresaId);
   }
 
   async loadMenus() {
