@@ -79,12 +79,12 @@ export class UsuariosService extends HttpService {
       }
       
       const { fullName, userName, email, rolId, active, password } = usuario;
-      const resp = await firstValueFrom(this.post<UsuarioResponse>(`${this.endpoints.usuarios}`, {
+      const resp = await firstValueFrom(this.post<ApiResponse<{ usuario: IUsuario }>>(`${this.endpoints.usuarios}`, {
         fullName, userName, email, rolId, empresaId, active, password
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
-        return resp.body;
+        return { ...resp.body, data: (resp.body.data as any)?.usuario ?? resp.body.data } as UsuarioResponse;
       }
       return null;
     } catch (error: any) {
@@ -96,13 +96,13 @@ export class UsuariosService extends HttpService {
 
   async updateUsuario(usuario: IUsuario): Promise<UsuarioResponse | null> {
     try {
-      const { userId, userName, email, rolId, puestoId, active } = usuario;
-      const resp = await firstValueFrom(this.put<UsuarioResponse>(`${this.endpoints.usuarios}/${userId}`, {
-        userName, email, rolId, puestoId, active
+      const { userId, fullName, userName, email, rolId, active, created_at } = usuario;
+      const resp = await firstValueFrom(this.put<ApiResponse<{ usuario: IUsuario }>>(`${this.endpoints.usuarios}`, {
+        userId, fullName, userName, email, rolId, active, created_at: created_at || new Date().toISOString()
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
-        return resp.body;
+        return { ...resp.body, data: (resp.body.data as any)?.usuario ?? resp.body.data } as UsuarioResponse;
       }
       return null;
     } catch (error: any) {

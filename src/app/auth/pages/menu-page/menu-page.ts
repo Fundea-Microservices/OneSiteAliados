@@ -177,7 +177,7 @@ export default class MenuPageComponent {
     const resp = await this.menuService.createMenu(payload as any);
     if (resp?.success) {
       // Agregar el nuevo menú a la lista local sin recargar toda la tabla
-      const nuevoMenu = resp.data;
+      const nuevoMenu = resp.data ?? { ...menu, menuId: menu.menuId || '' };
       if (menu.principal) {
         this.menusPrincipales.update(menus => [nuevoMenu, ...menus]);
         this.paginationMenus.update(p => ({ ...p, totalItems: p.totalItems + 1 }));
@@ -196,7 +196,7 @@ export default class MenuPageComponent {
     const resp = await this.menuService.updateMenu(menu);
     if (resp?.success) {
       // Actualizar el menú en la lista local sin recargar toda la tabla
-      const menuActualizado = resp.data;
+      const menuActualizado = resp.data ?? menu;
       if (menu.principal) {
         this.menusPrincipales.update(menus => 
           menus.map(m => m.menuId === menuActualizado.menuId ? menuActualizado : m)

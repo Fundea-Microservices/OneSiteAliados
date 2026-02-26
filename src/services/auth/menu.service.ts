@@ -50,12 +50,12 @@ export class MenuService extends HttpService {
   async createMenu(menu: Omit<IMenu, 'menuId' | 'created_at' | 'updated_at' | 'deleted_at'>): Promise<MenuResponse | null> {
     try {
       const { label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo } = menu;
-      const resp = await firstValueFrom(this.post<MenuResponse>(`${this.endpoints.menus}`, {
+      const resp = await firstValueFrom(this.post<ApiResponse<{ menu: IMenu }>>(`${this.endpoints.menus}`, {
         label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
-        return resp.body;
+        return { ...resp.body, data: (resp.body.data as any)?.menu ?? resp.body.data } as MenuResponse;
       }
       return null;
     } catch (error: any) {
@@ -68,12 +68,12 @@ export class MenuService extends HttpService {
   async updateMenu(menu: IMenu): Promise<MenuResponse | null> {
     try {
       const { menuId, label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo } = menu;
-      const resp = await firstValueFrom(this.put<MenuResponse>(`${this.endpoints.menus}/${menuId}`, {
+      const resp = await firstValueFrom(this.put<ApiResponse<{ menu: IMenu }>>(`${this.endpoints.menus}/${menuId}`, {
         label, descripcion, tramaId, color, icono, rutaApp, rutaWeb, principal, activo
       }));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
-        return resp.body;
+        return { ...resp.body, data: (resp.body.data as any)?.menu ?? resp.body.data } as MenuResponse;
       }
       return null;
     } catch (error: any) {

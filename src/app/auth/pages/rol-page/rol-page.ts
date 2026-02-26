@@ -229,7 +229,7 @@ export default class RolPageComponent {
     let resp = await this.rolService.createRol(rolConEmpresa)
     if (resp?.success) {
       // Agregar el nuevo rol a la lista local sin recargar toda la tabla
-      const nuevoRol = resp.data;
+      const nuevoRol = resp.data ?? rol;
       this.rolesList.update(roles => [nuevoRol, ...roles]);
       
       // Actualizar el total de items
@@ -248,7 +248,7 @@ export default class RolPageComponent {
     let resp = await this.rolService.updateRol(rol)
     if (resp?.success) {
       // Actualizar el rol en la lista local sin recargar toda la tabla
-      const rolActualizado = resp.data;
+      const rolActualizado = resp.data ?? rol;
       this.rolesList.update(roles => 
         roles.map(r => r.rolId === rolActualizado.rolId ? rolActualizado : r)
       );

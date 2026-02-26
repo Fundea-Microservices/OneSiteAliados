@@ -157,7 +157,7 @@ export default class UsuariosPageComponent {
     const resp = await this.usuariosService.createUsuario(payload as any);
     if (resp?.success) {
       // Agregar el nuevo usuario a la lista local sin recargar toda la tabla
-      const nuevoUsuario = resp.data;
+      const nuevoUsuario = resp.data ?? usuario;
       this.usuariosList.update(usuarios => [nuevoUsuario, ...usuarios]);
       
       // Actualizar el total de items
@@ -176,7 +176,8 @@ export default class UsuariosPageComponent {
     const resp = await this.usuariosService.updateUsuario(usuario);
     if (resp?.success) {
       // Actualizar el usuario en la lista local sin recargar toda la tabla
-      const usuarioActualizado = resp.data;
+      const usuarioActualizado = resp.data ?? usuario;
+      console.log("🚀 ~ UsuariosPageComponent ~ updateUsuario ~ usuarioActualizado:", usuarioActualizado)
       this.usuariosList.update(usuarios => 
         usuarios.map(u => u.userId === usuarioActualizado.userId ? usuarioActualizado : u)
       );

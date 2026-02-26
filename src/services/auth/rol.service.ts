@@ -90,10 +90,10 @@ export class RolService extends HttpService {
         empresaId
       };
       console.log('📤 Datos enviados para actualizar rol:', payload);
-      const resp = await firstValueFrom(this.put<RolResponse>(`${this.endpoints.rol}/${rolId}`, payload));          
+      const resp = await firstValueFrom(this.put<ApiResponse<{ rol: IRol }>>(`${this.endpoints.rol}/${rolId}`, payload));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
-        return resp.body;
+        return { ...resp.body, data: (resp.body.data as any)?.rol ?? resp.body.data } as RolResponse;
       }
 
       return null;
@@ -116,10 +116,10 @@ export class RolService extends HttpService {
         empresaId: createRol.empresaId
       };
       console.log('📤 Datos enviados para crear rol:', payload);
-      const resp = await firstValueFrom(this.post<RolResponse>(`${this.endpoints.rol}`, payload));
+      const resp = await firstValueFrom(this.post<ApiResponse<{ rol: IRol }>>(`${this.endpoints.rol}`, payload));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
-        return resp.body;
+        return { ...resp.body, data: (resp.body.data as any)?.rol ?? resp.body.data } as RolResponse;
       }
 
       return null;
