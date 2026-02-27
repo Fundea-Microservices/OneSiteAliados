@@ -54,6 +54,7 @@ export class UpsertRolComponent {
       activo: [rol.activo],
       global: [rol.global],
       esAdmin: [rol.esAdmin],
+      verTodo: [rol.verTodo],
       created_at: [rol.created_at],
     });
 
@@ -63,6 +64,7 @@ export class UpsertRolComponent {
         activo: true,
         global: false,
         esAdmin: false,
+        verTodo: false,
         created_at: new Date(),
       });
     }

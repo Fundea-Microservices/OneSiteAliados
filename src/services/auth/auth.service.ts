@@ -69,6 +69,7 @@ export class AuthService extends HttpService {
         activo: false,
         global: false,
         esAdmin: false,
+        verTodo: false,
         created_at: new Date()
       }
     };

@@ -79,6 +79,7 @@ export interface IRol {
     activo: boolean;        // Indica si está activo
     esAdmin: boolean;       // Indica si tiene privilegios de administrador
     global: boolean;
+    verTodo: boolean;
     empresaId?: string,
 
     // Relaciones

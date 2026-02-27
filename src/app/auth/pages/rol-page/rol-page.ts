@@ -15,6 +15,7 @@ const emptyRol: IRol = {
   global: false,
   esAdmin: false,
   activo: true,
+  verTodo: false,
   created_at: new Date(),
 }
 
@@ -35,6 +36,7 @@ export default class RolPageComponent {
     global: false,
     esAdmin: false,
     activo: true,
+    verTodo: false,
     created_at: new Date(),
   });
 

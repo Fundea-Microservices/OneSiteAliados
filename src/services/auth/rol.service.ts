@@ -81,12 +81,13 @@ export class RolService extends HttpService {
   async updateRol(rolUpdate: IRol): Promise<RolResponse | null> {
     try {
       // Preparamos los datos para actualizar
-      const { rolId, nombre, activo, global, esAdmin, empresaId } = rolUpdate;
+      const { rolId, nombre, activo, global, esAdmin, verTodo, empresaId } = rolUpdate;
       const payload = {
         nombre,
         activo,
         global,
         esAdmin,
+        verTodo,
         empresaId
       };
       console.log('📤 Datos enviados para actualizar rol:', payload);
@@ -112,7 +113,8 @@ export class RolService extends HttpService {
         nombre,
         activo,
         global: false,
-        esAdmin:false,
+        esAdmin: false,
+        verTodo: createRol.verTodo ?? false,
         empresaId: createRol.empresaId
       };
       console.log('📤 Datos enviados para crear rol:', payload);
