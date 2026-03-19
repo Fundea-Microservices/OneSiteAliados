@@ -23,7 +23,7 @@ export class RolService extends HttpService {
     super(http); // pasa HttpClient al servicio base
   }
 
-  async getRoles({ page = 1, limit = 10, busqueda = '', all = false } = {}): Promise<RolListResponse | null> {
+  async getRoles({ page = 1, limit = 10, busqueda = '', all = false, sinFiltroEmpresa = false } = {}): Promise<RolListResponse | null> {
     try {
       // Obtener empresaId del localStorage
       let empresaId: string | undefined;
@@ -45,7 +45,7 @@ export class RolService extends HttpService {
       if (all) {
         params = {...params, all: all};
       }
-      if (empresaId) {
+      if (empresaId && !sinFiltroEmpresa) {
         params = {...params, empresaId};
       }
       const resp = await firstValueFrom(this.get<RolListResponse>(`${this.endpoints.rol}`, params));

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { RolService } from '../../../../services/auth/rol.service';
 import { MenuService } from '../../../../services/auth/menu.service';
 import { AccesoService } from '../../../../services/auth/acceso.service';
+import { AuthService } from '../../../../services/auth/auth.service';
 import { IAcceso, IMenu, IRol } from '../../../../interfaces/auth';
 import UpsertAccesoComponent from '../../components/upsert-acceso/upsert-acceso';
 import { CustomIconComponent } from '../../../shared/components/custom-icon/custom-icon.component';
@@ -19,10 +20,17 @@ export default class AccesoPageComponent {
   private rolService = inject(RolService);
   private menuService = inject(MenuService);
   private accesoService = inject(AccesoService);
+  private authService = inject(AuthService);
   private empresaId = signal<string>('');
 
   roles = signal<IRol[]>([]);
   selectedRolId = signal<string>('');
+
+  verTodosRoles = signal<boolean>(false);
+
+  get esAdmin(): boolean {
+    return this.authService.user()?.rol?.esAdmin === true;
+  }
 
   menus = signal<IMenu[]>([]);
   accesos = signal<IAcceso[]>([]);
@@ -52,14 +60,23 @@ export default class AccesoPageComponent {
   }
 
   async loadRoles() {
-    const r = await this.rolService.getRoles({ all: true });
+    const sinFiltroEmpresa = this.verTodosRoles() && this.esAdmin;
+    const r = await this.rolService.getRoles({ all: true, sinFiltroEmpresa });
     if (r?.success) this.roles.set(r.data || []);
   }
 
   rolesEmpresa(): IRol[] {
+    if (this.verTodosRoles() && this.esAdmin) return this.roles();
     const currentEmpresaId = this.empresaId();
     if (!currentEmpresaId) return [];
     return (this.roles() || []).filter(role => role.empresaId === currentEmpresaId);
+  }
+
+  async onToggleVerTodos(checked: boolean) {
+    this.verTodosRoles.set(checked);
+    this.selectedRolId.set('');
+    this.accesos.set([]);
+    await this.loadRoles();
   }
 
   async loadMenus() {
