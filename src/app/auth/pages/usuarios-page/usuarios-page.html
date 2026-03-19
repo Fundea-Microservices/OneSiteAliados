@@ -80,6 +80,11 @@
                                 class="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 transition">
                                 <app-custom-icon [name]="'square-pen'" [color]="'#eee'" [size]="18"></app-custom-icon>
                             </button>
+                            <button (click)="openChangePassModal(u)"
+                                class="px-2 py-1 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600 transition"
+                                title="Cambiar contraseña">
+                                <app-custom-icon [name]="'key-round'" [color]="'#eee'" [size]="18"></app-custom-icon>
+                            </button>
                             <button (click)="openDeleteModal(u)"
                                 class="px-2 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition">
                                 <app-custom-icon [name]="'trash-2'" [color]="'#eee'" [size]="18"></app-custom-icon>
@@ -147,6 +152,69 @@
                     class="py-2 px-3 text-sm rounded-lg bg-white border">Cerrar</button>
                 <button type="button" (click)="deleteUsuario(usuarioEdit())"
                     class="py-2 px-3 text-sm rounded-lg text-white bg-red-600">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CAMBIAR CONTRASEÑA -->
+<div #changePassModal id="hs-change-pass-usuario"
+    class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none"
+    role="dialog" tabindex="-1" aria-labelledby="hs-change-pass-usuario-label">
+    <div
+        class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-md sm:w-full m-3 sm:mx-auto">
+        <div
+            class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl pointer-events-auto">
+            <div class="flex justify-between items-center py-3 px-4 border-b border-gray-200">
+                <h3 id="hs-change-pass-usuario-label" class="font-bold text-gray-800">
+                    Cambiar contraseña — {{ changePassUsuario()?.userName }}
+                </h3>
+                <button type="button" (click)="closeChangePassModal()"
+                    class="size-8 inline-flex justify-center items-center rounded-full bg-gray-100 hover:bg-gray-200">✕</button>
+            </div>
+            <div class="p-4 flex flex-col gap-4">
+                <!-- Nueva contraseña -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña</label>
+                    <div class="relative">
+                        <input [type]="changePassShowNew() ? 'text' : 'password'"
+                            [value]="changePassNewPass()"
+                            (input)="changePassNewPass.set($any($event.target).value)"
+                            placeholder="Nueva contraseña"
+                            class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                        <button type="button" (click)="changePassShowNew.set(!changePassShowNew())"
+                            class="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600">
+                            <app-custom-icon [name]="changePassShowNew() ? 'eye-off' : 'eye'" [size]="16"></app-custom-icon>
+                        </button>
+                    </div>
+                </div>
+                <!-- Confirmar contraseña -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar contraseña</label>
+                    <div class="relative">
+                        <input [type]="changePassShowConfirm() ? 'text' : 'password'"
+                            [value]="changePassConfirm()"
+                            (input)="changePassConfirm.set($any($event.target).value)"
+                            placeholder="Confirmar contraseña"
+                            class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+                        <button type="button" (click)="changePassShowConfirm.set(!changePassShowConfirm())"
+                            class="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600">
+                            <app-custom-icon [name]="changePassShowConfirm() ? 'eye-off' : 'eye'" [size]="16"></app-custom-icon>
+                        </button>
+                    </div>
+                    @if (changePassConfirm() && changePassNewPass() !== changePassConfirm()) {
+                    <p class="mt-1 text-xs text-red-600">Las contraseñas no coinciden.</p>
+                    }
+                </div>
+            </div>
+            <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t border-gray-200">
+                <button type="button" (click)="closeChangePassModal()"
+                    class="py-2 px-3 text-sm rounded-lg bg-white border">Cancelar</button>
+                <button type="button" (click)="submitChangePass()"
+                    [disabled]="changePassLoading() || !changePassNewPass() || !changePassConfirm() || changePassNewPass() !== changePassConfirm()"
+                    class="py-2 px-3 text-sm rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                    @if (changePassLoading()) { Guardando... } @else { Guardar }
+                </button>
             </div>
         </div>
     </div>

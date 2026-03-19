@@ -54,8 +54,16 @@ export default class UsuariosPageComponent {
   formKey = signal(Date.now());
   modal = signal({ titulo: 'Crear Usuario', visible: false });
 
+  changePassUsuario = signal<IUsuario | null>(null);
+  changePassNewPass = signal('');
+  changePassConfirm = signal('');
+  changePassLoading = signal(false);
+  changePassShowNew = signal(false);
+  changePassShowConfirm = signal(false);
+
   @ViewChild('upsertModal', { static: true }) upsertModal!: ElementRef<HTMLDivElement>;
   @ViewChild('deleteModal', { static: true }) deleteModal!: ElementRef<HTMLDivElement>;
+  @ViewChild('changePassModal', { static: true }) changePassModal!: ElementRef<HTMLDivElement>;
 
   async ngOnInit() {
     await this.fetchRolesYPuestos();
@@ -145,6 +153,41 @@ export default class UsuariosPageComponent {
       modalDEl.classList.add('hidden');
       modalDEl.classList.remove('open', 'pointer-events-auto');
     }
+  }
+
+  openChangePassModal(usuario: IUsuario) {
+    this.changePassUsuario.set(usuario);
+    this.changePassNewPass.set('');
+    this.changePassConfirm.set('');
+    this.changePassShowNew.set(false);
+    this.changePassShowConfirm.set(false);
+    const modalEl = this.changePassModal.nativeElement;
+    if ((window as any).HSOverlay) new (window as any).HSOverlay(modalEl).open();
+    else {
+      modalEl.classList.remove('hidden');
+      modalEl.classList.add('pointer-events-auto');
+    }
+  }
+
+  closeChangePassModal() {
+    const modalEl = this.changePassModal.nativeElement;
+    if ((window as any).HSOverlay) (window as any).HSOverlay.close(modalEl);
+    else {
+      modalEl.classList.add('hidden');
+      modalEl.classList.remove('open', 'pointer-events-auto');
+    }
+  }
+
+  async submitChangePass() {
+    const newPass = this.changePassNewPass();
+    const confirm = this.changePassConfirm();
+    const usuario = this.changePassUsuario();
+    if (!usuario || !newPass || !confirm) return;
+    if (newPass !== confirm) return;
+    this.changePassLoading.set(true);
+    const resp = await this.usuariosService.cambiarClaveAdmin(usuario.userId!, newPass);
+    this.changePassLoading.set(false);
+    if (resp?.success) this.closeChangePassModal();
   }
 
   async upsertUsuario(usuario: IUsuario) {

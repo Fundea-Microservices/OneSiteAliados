@@ -16,6 +16,7 @@ export class UsuariosService extends HttpService {
   private readonly endpoints = {
     usuarios: '/aliado/usuario',
     cambiarClave: '/aliado/cambiar-clave',
+    cambiarClaveAdmin: '/aliado/cambiar-clave-admin',
     files: '/files'
   };
 
@@ -137,6 +138,21 @@ export class UsuariosService extends HttpService {
       return null;
     } catch (error: any) {
       console.log('🚀 ~ UsuariosService ~ cambiarClave ~ error:', error);
+      this.toastr.error(error?.error?.message || 'Error al cambiar contraseña', 'Error');
+      return null;
+    }
+  }
+
+  async cambiarClaveAdmin(userId: string, newPassword: string): Promise<ApiResponse | null> {
+    try {
+      const resp = await firstValueFrom(this.post<ApiResponse>(`${this.endpoints.cambiarClaveAdmin}`, { userId, newPassword }));
+      if (resp.body?.success) {
+        this.toastr.success(resp.body.message || 'Contraseña actualizada', 'Éxito');
+        return resp.body;
+      }
+      return null;
+    } catch (error: any) {
+      console.log('🚀 ~ UsuariosService ~ cambiarClaveAdmin ~ error:', error);
       this.toastr.error(error?.error?.message || 'Error al cambiar contraseña', 'Error');
       return null;
     }
