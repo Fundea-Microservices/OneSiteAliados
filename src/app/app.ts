@@ -8,7 +8,7 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected title = 'Fundea Aliados';
+  protected title = 'Red de referidos FUNDEA';
 
   isSidebarOpen = false;
 
