@@ -199,19 +199,11 @@ export default class UsuariosPageComponent {
     const { userId, created_at, updated_at, deleted_at, ...payload } = usuario;
     const resp = await this.usuariosService.createUsuario(payload as any);
     if (resp?.success) {
-      // Agregar el nuevo usuario a la lista local sin recargar toda la tabla
-      const nuevoUsuario = resp.data ?? usuario;
-      this.usuariosList.update(usuarios => [nuevoUsuario, ...usuarios]);
-      
-      // Actualizar el total de items
-      this.pagination.update(p => ({
-        ...p,
-        totalItems: p.totalItems + 1
-      }));
-      
       this.closeModal();
       this.usuarioEdit.set({ ...emptyUsuario });
       this.nuevoUsuario.set(true);
+      // Releer desde el API para traer el usuario completo (rol, nombre, etc.)
+      this.fetchData();
     }
   }
 
