@@ -63,13 +63,13 @@ export default class UsuariosPageComponent {
 
   readonly passwordMinLength = PASSWORD_MIN_LENGTH;
   changePassTooShort = computed(() => {
-    const next = this.changePassNewPass();
+    const next = this.changePassNewPass().trim();
     return next.length > 0 && next.length < PASSWORD_MIN_LENGTH;
   });
-  changePassMismatch = computed(() => !!this.changePassConfirm() && this.changePassNewPass() !== this.changePassConfirm());
+  changePassMismatch = computed(() => !!this.changePassConfirm() && this.changePassNewPass().trim() !== this.changePassConfirm().trim());
   changePassValid = computed(() =>
-    this.changePassNewPass().length >= PASSWORD_MIN_LENGTH &&
-    this.changePassNewPass() === this.changePassConfirm()
+    this.changePassNewPass().trim().length >= PASSWORD_MIN_LENGTH &&
+    this.changePassNewPass().trim() === this.changePassConfirm().trim()
   );
 
   @ViewChild('upsertModal', { static: true }) upsertModal!: ElementRef<HTMLDivElement>;
@@ -190,7 +190,7 @@ export default class UsuariosPageComponent {
   }
 
   async submitChangePass() {
-    const newPass = this.changePassNewPass();
+    const newPass = this.changePassNewPass().trim();
     const usuario = this.changePassUsuario();
     if (!usuario || !this.changePassValid()) return;
     this.changePassLoading.set(true);
