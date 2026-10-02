@@ -7,11 +7,12 @@ import { PASSWORD_MIN_LENGTH, UsuariosService } from '../../../../services/auth/
 import { RolService } from '../../../../services/auth/rol.service';
 import { PuestoService } from '../../../../services/auth/puesto.service';
 import { IRol, IPuesto } from '../../../../interfaces/auth';
+import { CustomIconComponent } from '../../../shared/components/custom-icon/custom-icon.component';
 
 @Component({
   selector: 'app-mi-perfil-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, CustomIconComponent],
   templateUrl: './mi-perfil-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,6 +36,9 @@ export default class MiPerfilPageComponent {
   pwdNew = signal('');
   pwdConfirm = signal('');
   pwdLoading = signal(false);
+  pwdShowCurrent = signal(false);
+  pwdShowNew = signal(false);
+  pwdShowConfirm = signal(false);
   isForcePasswordChange = signal(false);
 
   readonly passwordMinLength = PASSWORD_MIN_LENGTH;
@@ -144,6 +148,9 @@ export default class MiPerfilPageComponent {
     this.pwdCurrent.set('');
     this.pwdNew.set('');
     this.pwdConfirm.set('');
+    this.pwdShowCurrent.set(false);
+    this.pwdShowNew.set(false);
+    this.pwdShowConfirm.set(false);
     this.showPwdModal.set(true);
     const el = this.passwordModal?.nativeElement;
     if (el) {

@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { AccesoService } from '../../../../services/auth/acceso.service';
+import { CustomIconComponent } from '../../../shared/components/custom-icon/custom-icon.component';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink],
+  imports: [RouterLink, CustomIconComponent],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -18,6 +19,7 @@ export default class LoginComponent {
 
   userName = signal('');
   password = signal('');
+  showPassword = signal(false);
 
   errorObj = signal<{ message: string; code: number, isError: boolean }>({
     message: '',

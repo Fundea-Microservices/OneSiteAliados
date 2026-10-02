@@ -39,13 +39,20 @@
             [value]="userName()" (input)="userName.set(txtUserName.value)" #txtUserName>
           <!-- Contraseña -->
           <label class="text-gray-300 text-sm">Contraseña</label>
-          <input type="password" name="password" 
-            class="w-full mt-1 mb-8 px-4 py-2 rounded-xl bg-white/10
-                 border border-white/20 text-white outline-none
-                 focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all"
-            [value]="password()" (input)="password.set(txtPassword.value)"
-            (keydown.enter)="login()"
-            #txtPassword >
+          <div class="relative mt-1 mb-8">
+            <input [type]="showPassword() ? 'text' : 'password'" name="password"
+              class="w-full px-4 py-2 pr-11 rounded-xl bg-white/10
+                   border border-white/20 text-white outline-none
+                   focus:border-blue-500 focus:ring-2 focus:ring-blue-400 transition-all"
+              [value]="password()" (input)="password.set(txtPassword.value)"
+              (keydown.enter)="login()"
+              #txtPassword >
+            <button type="button" (click)="showPassword.set(!showPassword())"
+              class="absolute inset-y-0 right-3 flex items-center opacity-70 hover:opacity-100"
+              [title]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+              <app-custom-icon [name]="showPassword() ? 'eye-off' : 'eye'" [color]="'#d1d5db'" [size]="18"></app-custom-icon>
+            </button>
+          </div>
           @if(errorObj().isError) {
           <div class="text-red-600 text-sm text-center">
             {{ errorObj().message }}
