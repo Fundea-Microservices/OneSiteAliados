@@ -57,8 +57,7 @@ export default class LoginComponent {
 
       let authData = await this.authService.login({ userName: this.userName(), password: this.password() })
       if (authData && authData.success) {
-        localStorage.setItem('token', authData?.data.token || '');
-        localStorage.setItem('usuario', JSON.stringify(authData?.data.user || {}));
+        // Token y usuario ya quedan persistidos por AuthService.login
 
         // Guardar empresas en el servicio y localStorage
         if (authData?.data?.empresas) {
@@ -179,8 +178,7 @@ export default class LoginComponent {
         localStorage.setItem('empresa', JSON.stringify(company));
         document.body.removeChild(modalBackground);
         // Verificar si el usuario es nuevo y requiere cambio de contraseña
-        const user = JSON.parse(localStorage.getItem('usuario') || '{}');
-        if (user.new === true) {
+        if (this.authService.user().new === true) {
           this.router.navigate(['/dashboard/mi-perfil'], { queryParams: { forcePasswordChange: 'true' } });
         } else {
           this.router.navigate(['/dashboard']);

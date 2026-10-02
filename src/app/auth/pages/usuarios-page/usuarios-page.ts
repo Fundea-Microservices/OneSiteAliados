@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination';
-import { UsuariosService } from '../../../../services/auth/usuarios.service';
+import { PASSWORD_MIN_LENGTH, UsuariosService } from '../../../../services/auth/usuarios.service';
 import { IUsuario, IRol, IPuesto } from '../../../../interfaces/auth';
 import { UpsertUsuarioComponent } from '../../components/upsert-usuario/upsert-usuario';
 import { RolService } from '../../../../services/auth/rol.service';
@@ -60,6 +60,17 @@ export default class UsuariosPageComponent {
   changePassLoading = signal(false);
   changePassShowNew = signal(false);
   changePassShowConfirm = signal(false);
+
+  readonly passwordMinLength = PASSWORD_MIN_LENGTH;
+  changePassTooShort = computed(() => {
+    const next = this.changePassNewPass();
+    return next.length > 0 && next.length < PASSWORD_MIN_LENGTH;
+  });
+  changePassMismatch = computed(() => !!this.changePassConfirm() && this.changePassNewPass() !== this.changePassConfirm());
+  changePassValid = computed(() =>
+    this.changePassNewPass().length >= PASSWORD_MIN_LENGTH &&
+    this.changePassNewPass() === this.changePassConfirm()
+  );
 
   @ViewChild('upsertModal', { static: true }) upsertModal!: ElementRef<HTMLDivElement>;
   @ViewChild('deleteModal', { static: true }) deleteModal!: ElementRef<HTMLDivElement>;
@@ -180,10 +191,8 @@ export default class UsuariosPageComponent {
 
   async submitChangePass() {
     const newPass = this.changePassNewPass();
-    const confirm = this.changePassConfirm();
     const usuario = this.changePassUsuario();
-    if (!usuario || !newPass || !confirm) return;
-    if (newPass !== confirm) return;
+    if (!usuario || !this.changePassValid()) return;
     this.changePassLoading.set(true);
     const resp = await this.usuariosService.cambiarClaveAdmin(usuario.userId!, newPass);
     this.changePassLoading.set(false);

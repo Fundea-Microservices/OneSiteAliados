@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { UpsertUsuarioComponent } from '../../components/upsert-usuario/upsert-usuario';
-import { UsuariosService } from '../../../../services/auth/usuarios.service';
+import { PASSWORD_MIN_LENGTH, UsuariosService } from '../../../../services/auth/usuarios.service';
 import { RolService } from '../../../../services/auth/rol.service';
 import { PuestoService } from '../../../../services/auth/puesto.service';
 import { IRol, IPuesto } from '../../../../interfaces/auth';
@@ -36,6 +36,18 @@ export default class MiPerfilPageComponent {
   pwdConfirm = signal('');
   pwdLoading = signal(false);
   isForcePasswordChange = signal(false);
+
+  readonly passwordMinLength = PASSWORD_MIN_LENGTH;
+  pwdTooShort = computed(() => {
+    const next = this.pwdNew().trim();
+    return next.length > 0 && next.length < PASSWORD_MIN_LENGTH;
+  });
+  pwdMismatch = computed(() => !!this.pwdConfirm() && this.pwdNew().trim() !== this.pwdConfirm().trim());
+  pwdValid = computed(() =>
+    !!this.pwdCurrent().trim() &&
+    this.pwdNew().trim().length >= PASSWORD_MIN_LENGTH &&
+    this.pwdNew().trim() === this.pwdConfirm().trim()
+  );
 
   @ViewChild('upsertModal', { static: true }) upsertModal!: ElementRef<HTMLDivElement>;
   @ViewChild('passwordModal', { static: true }) passwordModal!: ElementRef<HTMLDivElement>;
@@ -84,9 +96,9 @@ export default class MiPerfilPageComponent {
     if (!userName) return;
     const resp = await this.usuariosService.uploadPerfil(file, userName);
     if (resp?.success && resp.data?.filename) {
-      // Guardamos solo el filename en fotoUrl para usar el endpoint /auth/usuarios/perfil/:fileName
+      // Guardamos solo el filename en photoUrl para usar el endpoint /files/perfil/:fileName
       const filename = resp.data.filename;
-      const updatedTemp = { ...this.user(), fotoUrl: filename } as any;
+      const updatedTemp = { ...this.user(), photoUrl: filename };
       await this.auth.fetchAndApplyUserPhoto(updatedTemp); // descarga y cachea como dataURL
     }
     input.value = '';
@@ -163,13 +175,9 @@ export default class MiPerfilPageComponent {
   onCancelUsuario() { this.closeModals(); }
 
   async onChangePassword() {
+    if (!this.pwdValid()) return;
     const current = this.pwdCurrent().trim();
     const next = this.pwdNew().trim();
-    const confirm = this.pwdConfirm().trim();
-
-    if (!current || !next || !confirm) return;
-    if (next.length < 6) return; // validación mínima
-    if (next !== confirm) return;
 
     this.pwdLoading.set(true);
     try {
@@ -177,11 +185,9 @@ export default class MiPerfilPageComponent {
       const resp = await this.usuariosService.cambiarClave(userId, current, next);
       if (resp?.success) {
         // Actualizar marca de tiempo local del último cambio y marcar como no nuevo
-        const updated = { ...this.user(), lastPasswordUpdate: new Date(), new: false } as any;
+        const updated = { ...this.user(), lastPasswordUpdate: new Date(), new: false };
         this.auth.updateUser(updated);
-        // Actualizar también en localStorage
-        localStorage.setItem('usuario', JSON.stringify(updated));
-        
+
         // Si era cambio forzado, redirigir al dashboard
         if (this.isForcePasswordChange()) {
           this.isForcePasswordChange.set(false);

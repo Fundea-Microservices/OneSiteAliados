@@ -135,6 +135,8 @@ export class AuthService extends HttpService {
     try {
       const resp = await firstValueFrom(this.post<LoginResponse>(this.endpoints.login, data));
       if (resp.body?.success) {
+        // Guardar el token antes de descargar la foto, que se pide con Authorization
+        localStorage.setItem('token', resp.body.data.token || '');
         if (resp.body.data.user) {
           // Guardar usuario y, si tiene foto, descargarla y cachearla en localStorage
           const user = resp.body.data.user;
@@ -152,7 +154,7 @@ export class AuthService extends HttpService {
   }
 
   /**
-   * Si el usuario posee fotoUrl, intenta descargarla desde el backend,
+   * Si el usuario posee photoUrl, intenta descargarla desde el backend,
    * la convierte a dataURL y la almacena en localStorage bajo clave `fotoPerfil:<userName>`.
    * También actualiza el usuario en memoria con la dataURL para uso inmediato en la UI.
    */
@@ -201,7 +203,7 @@ export class AuthService extends HttpService {
       if (user.userName) {
         localStorage.setItem(`fotoPerfil:${user.userName}`, dataUrl);
       }
-      const updated = { ...user, fotoUrl: dataUrl } as IUsuario;
+      const updated: IUsuario = { ...user, photoUrl: dataUrl };
       this.updateUser(updated);
       return updated;
     } catch (e) {
@@ -236,6 +238,8 @@ export class AuthService extends HttpService {
     }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    // Clave antigua donde también se duplicaba el usuario; se limpia en sesiones previas
+    localStorage.removeItem('usuario');
     localStorage.removeItem('accesos');
     localStorage.removeItem('empresa');
     localStorage.removeItem('empresas');

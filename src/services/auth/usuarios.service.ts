@@ -11,6 +11,9 @@ import { HttpHeaders } from '@angular/common/http';
 type UsuarioResponse = ApiResponse<IUsuario>;
 type UsuarioListResponse = ApiResponse<IUsuario[]>;
 
+/** Longitud mínima de contraseña exigida en los formularios de cambio de clave */
+export const PASSWORD_MIN_LENGTH = 6;
+
 @Injectable({ providedIn: 'root' })
 export class UsuariosService extends HttpService {
   private readonly endpoints = {

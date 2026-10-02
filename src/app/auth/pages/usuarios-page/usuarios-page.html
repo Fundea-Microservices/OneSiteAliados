@@ -187,6 +187,9 @@
                             <app-custom-icon [name]="changePassShowNew() ? 'eye-off' : 'eye'" [size]="16"></app-custom-icon>
                         </button>
                     </div>
+                    @if (changePassTooShort()) {
+                    <p class="mt-1 text-xs text-red-600">Debe tener al menos {{ passwordMinLength }} caracteres.</p>
+                    }
                 </div>
                 <!-- Confirmar contraseña -->
                 <div>
@@ -202,7 +205,7 @@
                             <app-custom-icon [name]="changePassShowConfirm() ? 'eye-off' : 'eye'" [size]="16"></app-custom-icon>
                         </button>
                     </div>
-                    @if (changePassConfirm() && changePassNewPass() !== changePassConfirm()) {
+                    @if (changePassMismatch()) {
                     <p class="mt-1 text-xs text-red-600">Las contraseñas no coinciden.</p>
                     }
                 </div>
@@ -211,7 +214,7 @@
                 <button type="button" (click)="closeChangePassModal()"
                     class="py-2 px-3 text-sm rounded-lg bg-white border">Cancelar</button>
                 <button type="button" (click)="submitChangePass()"
-                    [disabled]="changePassLoading() || !changePassNewPass() || !changePassConfirm() || changePassNewPass() !== changePassConfirm()"
+                    [disabled]="changePassLoading() || !changePassValid()"
                     class="py-2 px-3 text-sm rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed">
                     @if (changePassLoading()) { Guardando... } @else { Guardar }
                 </button>
