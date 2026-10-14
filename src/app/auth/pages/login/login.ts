@@ -74,8 +74,7 @@ export default class LoginComponent {
             this.authService.setAccesosLoading(true);
             const accesosResp = await this.accesoService.getAccesosByRol(rolId);
             if (accesosResp?.data) {
-              // Persistir y actualizar signal para que el menú lateral reaccione sin refresh
-              localStorage.setItem('accesos', JSON.stringify(accesosResp.data));
+              // Filtra, persiste y actualiza el signal para que el menú lateral reaccione sin refresh
               this.authService.updateAccesos(accesosResp.data);
             } else {
               // Asegurar que no haya datos obsoletos

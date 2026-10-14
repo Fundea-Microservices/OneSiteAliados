@@ -4,7 +4,7 @@ import { HttpService } from '../HttpService';
 import { firstValueFrom } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { ApiResponse } from '../../interfaces/api-response';
-import { IAcceso, ILogin, IUsuario } from '../../interfaces/auth';
+import { IAcceso, ILogin, ISubmenu, IUsuario } from '../../interfaces/auth';
 import { environment } from '../../environments/environment';
 
 type LoginResponse = ApiResponse<ILogin>;
@@ -77,10 +77,25 @@ export class AuthService extends HttpService {
 
   private loadAccesosFromStorage(): IAcceso[] {
     const accesos = localStorage.getItem('accesos');
-    if (accesos) return JSON.parse(accesos);
+    if (accesos) return this.filtrarAccesosWeb(JSON.parse(accesos));
 
     // Accesos "vacíos"
     return [];
+  }
+
+  /**
+   * Deja solo los accesos y submenús activos y visibles en web, ordenados por `orden`.
+   * Se descartan los accesos que se quedan sin submenús visibles.
+   */
+  private filtrarAccesosWeb(accesos: IAcceso[]): IAcceso[] {
+    const esVisible = (a: IAcceso | ISubmenu) => a.activo && a.showWeb && !!a.menu && a.menu.activo !== false;
+    const porOrden = (a: { orden: number }, b: { orden: number }) => (a.orden ?? 0) - (b.orden ?? 0);
+
+    return (accesos || [])
+      .filter(esVisible)
+      .map(a => ({ ...a, subMenus: (a.subMenus || []).filter(esVisible).sort(porOrden) }))
+      .filter(a => a.subMenus.length > 0)
+      .sort(porOrden);
   }
 
   private loadEmpresasFromStorage(): any[] {
@@ -108,8 +123,9 @@ export class AuthService extends HttpService {
 
   /** Actualizar accesos en memoria y storage */
   updateAccesos(accesos: IAcceso[]) {
-    this._accesos.set(accesos || []);
-    localStorage.setItem('accesos', JSON.stringify(accesos || []));
+    const visibles = this.filtrarAccesosWeb(accesos);
+    this._accesos.set(visibles);
+    localStorage.setItem('accesos', JSON.stringify(visibles));
   }
 
   /** Actualizar empresas en memoria y storage */
