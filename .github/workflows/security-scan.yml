@@ -28,6 +28,11 @@ jobs:
       - name: Instalar Dependencias
         run: npm ci
 
+      - name: Verificar Firmas de Paquetes npm
+        # Comprueba con las firmas del registro de npm que los paquetes instalados no fueron alterados.
+        # Falla si alguna firma es inválida o falta.
+        run: npm audit signatures
+
       - name: Ejecutar Build de Producción
         run: npx ng build --configuration production
 
@@ -54,6 +59,26 @@ jobs:
           path: semgrep-results.json
           if-no-files-found: ignore
           retention-days: 30
+
+  secrets-scan:
+    name: "Detección de Secrets en el Historial (Gitleaks)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del Código Fuente (historial completo)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          # Sin esto solo se descarga el último commit y Gitleaks no vería el historial
+          fetch-depth: 0
+
+      - name: Ejecutar Escaneo de Secrets (Gitleaks)
+        # Revisa todos los commits (git log -p), no solo los archivos actuales.
+        # --redact oculta el valor de los secrets en el log. Imagen fijada por versión y digest.
+        # GIT_CONFIG_*: marca /repo como seguro, porque el volumen pertenece a otro usuario que el del contenedor.
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/repo" \
+            -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*' \
+            zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            git /repo --redact --verbose --no-banner
 
   sca-scan:
     name: "Análisis de Dependencias Terceras (SCA)"
