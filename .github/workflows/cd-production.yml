@@ -1,0 +1,65 @@
+name: "CD - Despliegue Frontend Angular - FUNDEA Aliados (Producción)"
+
+on:
+  push:
+    branches: [ "production" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Evita que dos despliegues a producción corran al mismo tiempo; el segundo espera al primero.
+concurrency:
+  group: cd-production-fundeaaliados
+  cancel-in-progress: false
+
+jobs:
+  security-scan:
+    name: "DevSecOps Security Scan"
+    uses: ./.github/workflows/security-scan.yml
+    permissions:
+      contents: read
+
+  build-and-deploy:
+    name: "Build y Despliegue Frontend a Servidor Producción"
+    # Solo despliega si pasan los 3 jobs del escaneo: build, SAST y SCA
+    needs: security-scan
+    # La etiqueta personalizada 'production' asegura que el job corra solo en el runner 'Fundea_pro'.
+    # Sin ella, el job también puede caer en 'desarrollotrans' (tiene las mismas etiquetas por defecto).
+    runs-on: [self-hosted, Linux, X64, production]
+
+    steps:
+      - name: Checkout del Código Fuente
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Instalar Dependencias
+        run: npm ci
+
+      - name: Generar environment.ts con Secrets de GitHub
+        run: |
+          # angular.json no tiene fileReplacements: el build de producción usa environment.ts directamente
+          cat <<EOF > src/environments/environment.ts
+          export const environment = {
+              production: true,
+              path: '${{ secrets.FUNDEA_PROD_API_URL }}',
+              apiPath: '${{ secrets.FUNDEA_PROD_API_URL }}${{ secrets.FUNDEA_PROD_PREFIX }}',
+              tokenCheckInterval: 5,
+              diasAtrasMovimientos: 1,
+          };
+          EOF
+
+      - name: Ejecutar Build de Angular
+        run: npx ng build --configuration production
+
+      - name: Desplegar en el Directorio Web
+        run: |
+          # rsync reemplaza el 'rm -rf' + 'cp', sin dejar el sitio vacío durante la copia.
+          # --no-owner/--no-group: no intenta copiar dueño ni grupo (evita los errores de chgrp).
+          mkdir -p /opt/fundea/aliados
+          rsync -av --no-owner --no-group --delete dist/fundeaaliados/browser/ /opt/fundea/aliados/

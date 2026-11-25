@@ -1,0 +1,74 @@
+name: "DevSecOps Security Scan - FUNDEA Aliados"
+
+on:
+  pull_request:
+    branches: [ "develop", "production" ]
+  # Sin 'push': en cada push a develop/production este escaneo lo ejecutan cd-develop.yml y
+  # cd-production.yml (vía workflow_call) antes de desplegar, así no corre dos veces por el mismo commit.
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-validation:
+    name: "Validación de Compilación (Build)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del Código Fuente
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Instalar Dependencias
+        run: npm ci
+
+      - name: Ejecutar Build de Producción
+        run: npx ng build --configuration production
+
+  sast-scan:
+    name: "Análisis Estático de Código (SAST)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del Código Fuente
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+
+      - name: Ejecutar Escaneo SAST (Semgrep)
+        # Una sola ejecución: muestra los hallazgos en el log, guarda el JSON y falla (--error) si hay hallazgos.
+        # Imagen fijada por versión y digest para que no cambie sin control entre ejecuciones.
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/src" -w /src \
+            semgrep/semgrep:1.185.0@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d \
+            semgrep scan --config=auto --error --text --json-output=semgrep-results.json
+
+      - name: Guardar Resultados de Semgrep
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: semgrep-results
+          path: semgrep-results.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  sca-scan:
+    name: "Análisis de Dependencias Terceras (SCA)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del Código Fuente
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+
+      - name: Ejecutar Escaneo SCA (Trivy)
+        # En modo 'fs' Trivy revisa package-lock.json (vulnerabilidades) y también busca secrets en los archivos.
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'HIGH,CRITICAL'
