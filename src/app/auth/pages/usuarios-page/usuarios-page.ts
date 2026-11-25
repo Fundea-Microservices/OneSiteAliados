@@ -221,7 +221,6 @@ export default class UsuariosPageComponent {
     if (resp?.success) {
       // Actualizar el usuario en la lista local sin recargar toda la tabla
       const usuarioActualizado = resp.data ?? usuario;
-      console.log("🚀 ~ UsuariosPageComponent ~ updateUsuario ~ usuarioActualizado:", usuarioActualizado)
       this.usuariosList.update(usuarios => 
         usuarios.map(u => u.userId === usuarioActualizado.userId ? usuarioActualizado : u)
       );

@@ -36,7 +36,8 @@ export const routes: Routes = [
             },
             {
                 path: 'config',
-                // canActivate: [AccessGuard],
+                // Las pantallas de administración solo para roles admin o con acceso asignado
+                canActivateChild: [AccessGuard],
                 children: [
                     {
                         path: 'menus',

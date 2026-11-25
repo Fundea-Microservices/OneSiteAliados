@@ -117,8 +117,10 @@ export class AuthService extends HttpService {
 
   /** Actualizar usuario en memoria y storage */
   updateUser(user: IUsuario) {
-    this._user.set(user);
-    localStorage.setItem('user', JSON.stringify(user));
+    // Nunca conservar la contraseña (ni su hash) en memoria ni en localStorage
+    const safeUser: IUsuario = { ...user, password: '' };
+    this._user.set(safeUser);
+    localStorage.setItem('user', JSON.stringify(safeUser));
   }
 
   /** Actualizar accesos en memoria y storage */
@@ -158,12 +160,10 @@ export class AuthService extends HttpService {
           const user = resp.body.data.user;
           await this.fetchAndApplyUserPhoto(user);
         }
-        console.log("🚀 ~ AuthService ~ login ~ resp:", resp.body)
         return resp.body;
       }
       return null;
     } catch (error: any) {
-      console.log("🚀 ~ UsuariosService ~ login ~ error:", error)
       this.toastr.error(error?.error?.message || 'Error al iniciar sesión', 'Error');
       return null;
     }
@@ -207,9 +207,12 @@ export class AuthService extends HttpService {
         url = `${environment.apiPath}${relative}`;
       }
 
-      // Preparar headers con token; NO forzar Content-Type
+      // Preparar headers con token; NO forzar Content-Type.
+      // El token solo se envía al mismo origen que la API, nunca a dominios externos.
       const token = localStorage.getItem('token') || '';
-      const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+      const headers = token && this.isApiOrigin(url)
+        ? new HttpHeaders({ Authorization: `Bearer ${token}` })
+        : undefined;
 
       const blob = await firstValueFrom(
         this.httpClient.get(url, { headers, responseType: 'blob' as const })
@@ -226,6 +229,15 @@ export class AuthService extends HttpService {
       // Si falla la descarga, dejamos el user como está
       this.updateUser(user);
       return user;
+    }
+  }
+
+  /** Indica si la URL pertenece al mismo origen (protocolo + host + puerto) que la API */
+  private isApiOrigin(url: string): boolean {
+    try {
+      return new URL(url, window.location.origin).origin === new URL(environment.apiPath, window.location.origin).origin;
+    } catch {
+      return false;
     }
   }
 

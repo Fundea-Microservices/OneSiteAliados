@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivate, CanActivateChild, Router, UrlTree, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { IAcceso } from '../../../interfaces/auth';
 
 @Injectable({ providedIn: 'root' })
-export class AccessGuard implements CanActivate {
+export class AccessGuard implements CanActivate, CanActivateChild {
   private readonly prefix = '/dashboard/';
 
   constructor(private authService: AuthService, private router: Router) {}
+
+  /** Se evalúa en cada navegación entre rutas hijas (p. ej. /dashboard/config/*) */
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
+    return this.canActivate(route, state);
+  }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
     // Si no está autenticado, deja que el AuthGuard se encargue en rutas protegidas
@@ -66,7 +71,7 @@ export class AccessGuard implements CanActivate {
     // Asegurar prefijo '/'
     let normalized = clean.startsWith('/') ? clean : '/' + clean;
     // Eliminar dobles barras
-    normalized = normalized.replace(/\/+/, '/');
+    normalized = normalized.replace(/\/+/g, '/');
     // Remover trailing slash excepto en raíz
     if (normalized.length > 1 && normalized.endsWith('/')) {
       normalized = normalized.slice(0, -1);

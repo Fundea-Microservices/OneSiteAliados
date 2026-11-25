@@ -94,7 +94,6 @@ export default class RolPageComponent {
       limit: this.pagination().pageSize,
       busqueda: this.buscador()
     });
-    console.log("🚀 ~ RolPageComponent ~ fetchData ~ response:", response)
 
     if (response?.success) {
       // Asegurar que data sea un array

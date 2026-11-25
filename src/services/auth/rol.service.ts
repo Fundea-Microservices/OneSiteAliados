@@ -65,7 +65,6 @@ export class RolService extends HttpService {
   async getRol(rolId: string): Promise<RolResponse | null> {
     try {
       const resp = await firstValueFrom(this.get<RolResponse>(`${this.endpoints.rol}/${rolId}`));
-      console.log("🚀 ~ RolService ~ getRol ~ resp:", resp)
       if (resp.body?.success) {
         return resp.body;
       }
@@ -90,7 +89,6 @@ export class RolService extends HttpService {
         verTodo,
         empresaId
       };
-      console.log('📤 Datos enviados para actualizar rol:', payload);
       const resp = await firstValueFrom(this.put<ApiResponse<{ rol: IRol }>>(`${this.endpoints.rol}/${rolId}`, payload));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');
@@ -117,7 +115,6 @@ export class RolService extends HttpService {
         verTodo: createRol.verTodo ?? false,
         empresaId: createRol.empresaId
       };
-      console.log('📤 Datos enviados para crear rol:', payload);
       const resp = await firstValueFrom(this.post<ApiResponse<{ rol: IRol }>>(`${this.endpoints.rol}`, payload));
       if (resp.body?.success) {
         this.toastr.success(resp.body.message, 'Éxito');

@@ -20,13 +20,13 @@ export class HttpService {
   }
 
   private setHeaders(extraHeaders: { [key: string]: string } = {}): HttpHeaders {
-    let headers = new HttpHeaders({
+    const token = this.getToken();
+    return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.getToken()}`,
+      // Solo se envía Authorization cuando realmente hay sesión
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...extraHeaders
     });
-
-    return headers;
   }
 
   public get<T>(url: string, params?: { [key: string]: any }): Observable<HttpResponse<T>> {
