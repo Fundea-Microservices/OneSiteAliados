@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy:ubuntu": "git fetch origin && git pull && npm install && ng build --configuration production && sudo rm -rf /var/www/fundeaaliados/* && sudo cp -r dist/fundeaaliados/* /var/www/fundeaaliados/",
-    "deploy:amazon": "git fetch origin && git pull && npm install && ng build --configuration production && sudo rm -rf /usr/share/nginx/html/fundeaaliados/* && sudo cp -r dist/fundeaaliados/* /usr/share/nginx/html/fundeaaliados"
+    "deploy:ubuntu": "git fetch origin && git pull && npm ci && ng build --configuration production && sudo rm -rf /var/www/fundeaaliados/* && sudo cp -r dist/fundeaaliados/* /var/www/fundeaaliados/",
+    "deploy:amazon": "git fetch origin && git pull && npm ci && ng build --configuration production && sudo rm -rf /usr/share/nginx/html/fundeaaliados/* && sudo cp -r dist/fundeaaliados/* /usr/share/nginx/html/fundeaaliados"
   },
   "private": true,
   "dependencies": {
